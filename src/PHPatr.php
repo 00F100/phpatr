@@ -15,6 +15,7 @@ namespace PHPatr
 		private $_bases = array();
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
+		private $_saveFile = false;
 
 		public function init()
 		{
@@ -26,10 +27,22 @@ namespace PHPatr
 				switch($value){
 					case '--config':
 					case '-c':
-					$this->_configFile = next($args);
-					break;
+						$this->_configFile = next($args);
+						break;
+					case '--output':
+					case '-o':
+						$this->_saveFile = next($args);
+						break;
+					default:
+					case '--help':
+					case '-h':
+						$this->_help();
+						break;
 				}
 				next($args);
+			}
+			if($this->_saveFile){
+				$this->_resetLogFile();
 			}
 			return $this->_run();
 		}
@@ -206,17 +219,49 @@ namespace PHPatr
 			if($array && is_array($array)){
 				print_r($array);
 			}
+			if($this->_saveFile){
+				$this->_logFile('LOG: ' . $message . "\n");
+			}
 		}
 
 		private function _error($base, $auth, $test)
 		{
 			$this->_hasError = 1;
 			echo "[\033[31mFAIL\033[0m] " . $test['name'] . " \n";
+			if($this->_saveFile){
+				$this->_logFile('[FAIL] ' . $test['name'] . "\n");
+			}
 		}
 
 		private function _success($base, $auth, $test)
 		{
 			echo "[\033[32m OK \033[0m] " . $test['name'] . " \n";
+			if($this->_saveFile){
+				$this->_logFile('[ OK ] ' . $test['name'] . "\n");
+			}
+		}
+
+		private function _logFile($message)
+		{
+			$fopen = fopen($this->_saveFile, 'a');
+			fwrite($fopen, 'LOG: ' . $message);
+			fclose($fopen);
+		}
+
+		private function _resetLogFile()
+		{
+			unlink($this->_saveFile);
+		}
+
+		private function _help()
+		{
+			echo "   \033[33mUsage:\033[0m\n";
+			echo "	\033[32m php phpatr.phar -c <config file> \033[0m \n\n";
+			echo "	Options:\n";
+			echo "	\033[37m  -c, --config                     File of configuration in JSON to test API REST calls \033[0m \n";
+			echo "	\033[37m  -h, --help                       Show this menu \033[0m \n";
+			echo "	\033[37m  -o, --output                     Output file to save log \033[0m";
+			die(1);
 		}
 	}
 }

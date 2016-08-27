@@ -97,7 +97,12 @@ Usage
 --------------------
 
 ```
-$ php phpatr.phar  --config ./phpatr.json
+php phpatr.phar -c <config file>  
+
+	Options:
+	  -c, --config                     File of configuration in JSON to test API REST calls  
+	  -h, --help                       Show this menu  
+	  -o, --output                     Output file to save log 
 ```
 
 Example return
