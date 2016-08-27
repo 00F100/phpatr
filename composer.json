@@ -1,9 +1,9 @@
 {
-    "name": "00f100/test-api-rest",
+    "name": "00f100/phpatr",
     "type": "package",
-    "description": "Testes for API Rest to Phar use",
+    "description": "Package to your test routes API REST to use in Jenkins",
     "keywords": ["test", "api", "rest"],
-    "homepage": "https://github.com/00f100/test-api-rest",
+    "homepage": "https://github.com/00f100/phpatr",
     "authors": [
         {
             "name": "João Moraes",
