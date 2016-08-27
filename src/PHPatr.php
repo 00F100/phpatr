@@ -252,6 +252,14 @@ namespace PHPatr
 			}
 		}
 
+		private function _true($message)
+		{
+			echo "[\033[32m OK \033[0m] " . $message . " \n";
+			if($this->_saveFile){
+				$this->_logFile('[ OK ] ' . $message . "\n");
+			}
+		}
+
 		private function _success($base, $auth, $test)
 		{
 			echo "[\033[32m OK \033[0m] " . $test['name'] . " \n";
@@ -283,7 +291,7 @@ namespace PHPatr
 			die(1);
 		}
 
-		private function _checkUpdate()
+		private function _checkUpdate($returnVersion = false)
 		{
 			$client = new Client([
 				'base_uri' => $this->_update['base'],
@@ -305,6 +313,10 @@ namespace PHPatr
 			$version = implode($version);
 			$_cdn_version = str_replace('.', '', $version);
 
+			if($returnVersion){
+				return $version;
+			}
+
 			$_local_version = $this->_version;
 			$_local_version = str_replace('.', '', $_local_version);
 
@@ -323,28 +335,44 @@ namespace PHPatr
 
 		private function _selfUpdate()
 		{
-			$pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
-			// $toFile = __DIR__ . '/dist/phpatr-updated.phar';
-			    try {
-			    	$client = new Client();
-				// $client = new Guzzle\Http\Client();
-				$response = $client->request('GET', $this->_download . md5(microtime()));
-				$body = $response->getBody();
-				$phar = array();
-				while (!$body->eof()) {
-					$phar[] = $body->read(10240);
-				}
-				$phar = implode($phar);
-				$fopen = fopen($pharFile, 'w');
-				fwrite($fopen, $phar);
-				fclose($fopen);
-				copy($pharFile, 'phpatr.phar');
-				unlink($pharFile);
-			        return true;
-			    } catch (Exception $e) {
-			        // Log the error or something
-			        return false;
-			    }
+			$version = $this->_checkUpdate(true);
+			$_cdn_version = str_replace('.', '', $version);
+			$_local_version = $this->_version;
+			$_local_version = str_replace('.', '', $_local_version);
+
+			if($_local_version < $_cdn_version){
+				$pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
+				// $toFile = __DIR__ . '/dist/phpatr-updated.phar';
+				 try {
+				 	$client = new Client();
+				 	$this->_log('Downloading new version');
+					$response = $client->request('GET', $this->_download . md5(microtime()));
+					$body = $response->getBody();
+					$phar = array();
+					while (!$body->eof()) {
+						$phar[] = $body->read(10240);
+					}
+					$phar = implode($phar);
+				 	$this->_true('Downloading new version');
+					$fopen = fopen($pharFile, 'w');
+					fwrite($fopen, $phar);
+					fclose($fopen);
+					 	$this->_log('Updating Phar file');
+					copy($pharFile, 'phpatr.phar');
+					 	$this->_true('Updating Phar file');
+					 	$this->_log('Removing temporary file');
+						unlink($pharFile);
+					 	$this->_true('Removing temporary file');
+						$this->_true('PHPatr updated to: ' . $version);
+				     	die();
+				 } catch (Exception $e) {
+					$this->_error('Downloading new version');
+				     	die();
+				 }
+			}else{
+				$this->_log('Your version is updated');
+			     	die();
+			}
 		}
 
 		private function _version()
