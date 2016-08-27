@@ -2,9 +2,9 @@
 
 namespace PHPatr\Exceptions
 {
-	use PHPatr\Exceptions\TestApiRestException;
+	use PHPatr\Exceptions\PHpatrException;
 
-	class ConfigFileNotFoundException extends TestApiRestException
+	class ConfigFileNotFoundException extends PHpatrException
 	{
 		protected $message = 'The file on config the test not found in "%s"';
 		protected $code = 500;

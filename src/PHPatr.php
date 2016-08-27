@@ -202,26 +202,21 @@ namespace PHPatr
 
 		private function _log($message, $array = false)
 		{
-			echo 'LOG: ' . $message;
+			echo "LOG: \033[33m$message\033[0m \n";
 			if($array && is_array($array)){
-				echo "\n";
 				print_r($array);
-			}else{
-				echo "\n";
 			}
 		}
 
 		private function _error($base, $auth, $test)
 		{
 			$this->_hasError = 1;
-			echo '[FAIL] ' . $test['name'];
-			echo "\n";
+			echo "[\033[31mFAIL\033[0m] " . $test['name'] . " \n";
 		}
 
 		private function _success($base, $auth, $test)
 		{
-			echo '[ OK ] ' . $test['name'];
-			echo "\n";
+			echo "[\033[32m OK \033[0m] " . $test['name'] . " \n";
 		}
 	}
 }
