@@ -19,6 +19,7 @@ namespace PHPatr
 
 		public function init()
 		{
+			$configured = false;
 			$args = func_get_args();
 			if($args[0] == 'index.php'){
 				unset($args[0]);
@@ -28,18 +29,21 @@ namespace PHPatr
 					case '--config':
 					case '-c':
 						$this->_configFile = next($args);
+						$configured = true;
 						break;
 					case '--output':
 					case '-o':
 						$this->_saveFile = next($args);
 						break;
-					default:
 					case '--help':
 					case '-h':
 						$this->_help();
 						break;
 				}
 				next($args);
+			}
+			if(!$configured){
+				$this->_help();
 			}
 			if($this->_saveFile){
 				$this->_resetLogFile();
