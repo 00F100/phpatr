@@ -7,7 +7,7 @@ Test your API REST on Jenkins based on JSON file!
 Installation
 --------------------
 
-[Download Phar file]()
+[Download Phar file](https://raw.githubusercontent.com/00F100/phptar/master/dist/phptar.phar)
 
 Configuration
 --------------------
