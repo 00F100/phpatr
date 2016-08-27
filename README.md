@@ -1,6 +1,3 @@
-# PHPTar - Test Api Rest
-
-## Usa
 
 PHPTar - Test Api Rest
 ========================================
