@@ -9,6 +9,12 @@ Easy configuration and secure result!
 Installation
 --------------------
 
+```
+$ wget https://raw.githubusercontent.com/00F100/phpatr/master/dist/phpatr.phar
+```
+
+or
+
 [Download Phar file](https://raw.githubusercontent.com/00F100/phpatr/master/dist/phpatr.phar)
 
 Configuration
@@ -20,11 +26,11 @@ Example:
 
 ```json
 {
-	"name": "Test jsonplaceholder.typicode.com",
+	"name": "Test reqres.in",
 	"base": [
 		{
-			"name": "jsonPlaceholder",
-			"url": "https://jsonplaceholder.typicode.com",
+			"name": "reqres.in",
+			"url": "http://reqres.in",
 			"query": {},
 			"header": {}
 		}
@@ -32,61 +38,84 @@ Example:
 	"auth": [
 		{
 			"name": "noAuth",
-			"type": "GET",
 			"query":{},
 			"header": {}
 		}
 	],
 	"tests": [
 		{
-			"name": "Test comments",
-			"base": "jsonPlaceholder",
+			"name": "Test users single vetor",
+			"base": "reqres.in",
 			"auth": "noAuth",
-			"path": "/comments",
-			"query": {},
+			"path": "/api/users",
+			"method": "GET",
+			"query": {
+				"page": 2
+			},
 			"header": {},
 			"assert": {
 				"type": "json",
 				"code": 200,
-				"fields": [
-					{
-						"id": "integer",
-						"name": "string",
-						"body": "string"
-					}
-				]
+				"fields": {
+					"page": "integer",
+					"per_page": "integer",
+					"total": "integer",
+					"total_pages": "integer"
+				}
 			}
 		},
 		{
-			"name": "Test posts",
-			"base": "jsonPlaceholder",
+			"name": "Test users vector multilevel",
+			"base": "reqres.in",
 			"auth": "noAuth",
-			"path": "/posts",
-			"query": {},
+			"path": "/api/users",
+			"method": "GET",
+			"query": {
+				"page": 2
+			},
 			"header": {},
 			"assert": {
 				"type": "json",
 				"code": 200,
-				"fields": [
-					{
-						"id": "integer",
-						"title": "string",
-						"body": "string"
-					}
-				]
+				"fields": {
+					"page": "integer",
+					"per_page": "integer",
+					"total": "integer",
+					"total_pages": "integer",
+					"data": [
+						{
+							"id": "integer",
+							"first_name": "string"
+						}
+					]
+				}
 			}
 		},
 		{
-			"name": "Page error 404",
-			"base": "jsonPlaceholder",
+			"name": "Example error: Test users vector multilevel",
+			"base": "reqres.in",
 			"auth": "noAuth",
-			"path": "/error",
-			"query": {},
+			"path": "/api/users",
+			"method": "GET",
+			"query": {
+				"page": 2
+			},
 			"header": {},
 			"assert": {
 				"type": "json",
-				"code": 404,
-				"fields": {}
+				"code": 200,
+				"fields": {
+					"page": "integer",
+					"per_page": "integer",
+					"total": "integer",
+					"total_pages": "integer",
+					"data": [
+						{
+							"id": "integer",
+							"first_name": "integer"
+						}
+					]
+				}
 			}
 		}
 	]
@@ -164,7 +193,7 @@ user@ubuntu /path/to/project> php phpatr.phar --config phpatr.json
 Example "help"
 
 ```
-joao@joao /m/j/2/96-php-scripts> php phpatr.phar -h
+user@ubuntu /m/j/2/96-php-scripts> php phpatr.phar -h
    Usage:
          Test API REST: 
 	 php phpatr.phar --config <config file> [--output <file>]  
