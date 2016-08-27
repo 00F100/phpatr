@@ -1,0 +1,23 @@
+{
+    "name": "00f100/test-api-rest",
+    "type": "package",
+    "description": "Testes for API Rest to Phar use",
+    "keywords": ["test", "api", "rest"],
+    "homepage": "https://github.com/00f100/test-api-rest",
+    "authors": [
+        {
+            "name": "João Moraes",
+            "email": "joaomoraesbr@gmail.com",
+            "homepage": "https://github.com/00f100"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "6.*"
+    },
+    "autoload": {
+        "files": ["src/functions.php"],
+        "psr-4": {
+            "TestApiRest\\": "src/"
+        }
+    }
+}

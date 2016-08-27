@@ -1,0 +1,65 @@
+{
+	"name": "Teste API Rest",
+	"base": [
+		{
+			"name": "firstBase",
+			"url": "http://gruposo-api.local",
+			"query": {
+				"type": "json"
+			},
+			"header": {
+				"Content-Type": "application/json"
+			}
+		}
+	],
+	"auth": [
+		{
+			"name": "firstAuth",
+			"type": "GET",
+			"query":{
+				"access_token": "xfVlgHIeKolVmSLMfMOpfjqOAEMyLUyTS3XGi9IgkNgHIKxQiwY55MKxnppZKTBIPFOILZCqcqE2OoCY"
+			},
+			"header": {}
+		}
+	],
+	"tests": [
+		{
+			"name": "Primeira rota",
+			"base": "firstBase",
+			"auth": "firstAuth",
+			"path": "/grupos/pendentes",
+			"query": {},
+			"header": {},
+			"assert": {
+				"type": "json",
+				"code": 200,
+				"fields": [
+					{
+						"id": "integer",
+						"nome": "string",
+						"icone": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Segunda rota",
+			"base": "firstBase",
+			"auth": "firstAuth",
+			"path": "/grupos/pendentes",
+			"query": {},
+			"header": {},
+			"assert": {
+				"type": "json",
+				"code": 200,
+				"fields": [
+					{
+						"id": "integer",
+						"nome": "string",
+						"icone": "string"
+					}
+				]
+			}
+		}
+	]
+}
