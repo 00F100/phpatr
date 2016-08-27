@@ -32,17 +32,22 @@ namespace PHPatr
 			}
 			while($value = current($args)){
 				switch($value){
-					case '--config':
 					case '-c':
+					case '--config':
 						$this->_configFile = next($args);
 						$configured = true;
 						break;
-					case '--output':
 					case '-o':
+					case '--output':
 						$this->_saveFile = next($args);
 						break;
+					case '-up':
 					case '--self-update':
 						$this->_selfUpdate();
+						break;
+					case '-v':
+					case '--version':
+						$this->_version();
 						break;
 					case '--help':
 					case '-h':
@@ -298,16 +303,20 @@ namespace PHPatr
 				$version[] = $body->read(1024);
 			}
 			$version = implode($version);
-			$version = str_replace('.', '', $version);
+			$_cdn_version = str_replace('.', '', $version);
 
-			if($this->_version < $version){
-				$this->_messageUpdate();
+			$_local_version = $this->_version;
+			$_local_version = str_replace('.', '', $_local_version);
+
+			if($_local_version < $_cdn_version){
+				$this->_messageUpdate($version);
 			}
 		}
 
-		private function _messageUpdate()
+		private function _messageUpdate($version)
 		{
 			echo "\033[31mUPDATE:\033[0m \033[31m There is a new version available! \033[0m \n";
+			echo "\033[31mUPDATE:\033[0m \033[31m $this->_version -> $version \033[0m \n";
 			echo "\033[31mUPDATE:\033[0m \033[31m Automatic: Run the self-update: php phpatr.phar --self-update \033[0m \n";
 			echo "\033[31mUPDATE:\033[0m \033[31m Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/) \033[0m \n";
 		}
@@ -336,6 +345,12 @@ namespace PHPatr
 			        // Log the error or something
 			        return false;
 			    }
+		}
+
+		private function _version()
+		{
+			echo $this->_version;
+			die();
 		}
 	}
 }
