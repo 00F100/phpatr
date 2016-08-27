@@ -16,6 +16,12 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
+		private $_version = '0.1.0';
+		private $_update = array(
+			'base' => 'https://raw.githubusercontent.com',
+			'path' => '/00F100/phpatr/master/dist/version',
+		);
+		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar';
 
 		public function init()
 		{
@@ -35,6 +41,9 @@ namespace PHPatr
 					case '-o':
 						$this->_saveFile = next($args);
 						break;
+					case '--self-update':
+						$this->_selfUpdate();
+						break;
 					case '--help':
 					case '-h':
 						$this->_help();
@@ -48,6 +57,7 @@ namespace PHPatr
 			if($this->_saveFile){
 				$this->_resetLogFile();
 			}
+			$this->_checkUpdate();
 			return $this->_run();
 		}
 
@@ -266,6 +276,66 @@ namespace PHPatr
 			echo "	\033[37m  -h, --help                       Show this menu \033[0m \n";
 			echo "	\033[37m  -o, --output                     Output file to save log \033[0m";
 			die(1);
+		}
+
+		private function _checkUpdate()
+		{
+			$client = new Client([
+				'base_uri' => $this->_update['base'],
+				'timeout' => 10,
+				'allow_redirects' => false,
+			]);
+
+			try {
+				$response = $client->request('GET', $this->_update['path']);
+			} catch(Exception $e){
+				return false;
+			}
+
+			$body = $response->getBody();
+			$version = array();
+			while (!$body->eof()) {
+				$version[] = $body->read(1024);
+			}
+			$version = implode($version);
+			$version = str_replace('.', '', $version);
+
+			if($this->_version < $version){
+				$this->_messageUpdate();
+			}
+		}
+
+		private function _messageUpdate()
+		{
+			echo "\033[31mUPDATE:\033[0m \033[31m There is a new version available! \033[0m \n";
+			echo "\033[31mUPDATE:\033[0m \033[31m Automatic: Run the self-update: php phpatr.phar --self-update \033[0m \n";
+			echo "\033[31mUPDATE:\033[0m \033[31m Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/) \033[0m \n";
+		}
+
+		private function _selfUpdate()
+		{
+			$pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
+			// $toFile = __DIR__ . '/dist/phpatr-updated.phar';
+			    try {
+			    	$client = new Client();
+				// $client = new Guzzle\Http\Client();
+				$response = $client->request('GET', $this->_download);
+				$body = $response->getBody();
+				$phar = array();
+				while (!$body->eof()) {
+					$phar[] = $body->read(10240);
+				}
+				$phar = implode($phar);
+				$fopen = fopen($pharFile, 'w');
+				fwrite($fopen, $phar);
+				fclose($fopen);
+				copy($pharFile, 'phpatr.phar');
+				unlink($pharFile);
+			        return true;
+			    } catch (Exception $e) {
+			        // Log the error or something
+			        return false;
+			    }
 		}
 	}
 }
