@@ -1,8 +1,8 @@
 <?php
 
-namespace TestApiRest\Exceptions
+namespace PHPatr\Exceptions
 {
-	use TestApiRest\Exceptions\TestApiRestException;
+	use PHPatr\Exceptions\TestApiRestException;
 
 	class ErrorTestException extends TestApiRestException
 	{

@@ -5,7 +5,7 @@
  * @package     	TestApiRest
  * @author 		João Moraes <joaomoraesbr@gmail.com>
  */
-namespace TestApiRest
+namespace PHPatr
 {
 	class Debug
 	{
@@ -95,7 +95,7 @@ namespace TestApiRest
 				}
 			}
 			if($exit){
-				die;
+				exit;
 			}
 		}
 	}

@@ -1,18 +1,19 @@
 <?php
 
-namespace TestApiRest
+namespace PHPatr
 {
+	use Phar;
 	use Exception;
 	use GuzzleHttp\Client;
-	use TestApiRest\Exceptions\ConfigFileNotFoundException;
-	use TestApiRest\Exceptions\ErrorTestException;
+	use PHPatr\Exceptions\ConfigFileNotFoundException;
+	use PHPatr\Exceptions\ErrorTestException;
 
-	class Test
+	class PHPatr
 	{
 		private $_client;
 		private $_auths = array();
 		private $_bases = array();
-		private $_configFile = './test-api-rest.json';
+		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 
 		public function init()
@@ -35,13 +36,13 @@ namespace TestApiRest
 
 		private function _run()
 		{
-			if(!is_file($this->_configFile)){
-				throw new ConfigFileNotFoundException($this->_configFile);
+			$configFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . $this->_configFile;
+			if(!is_file($configFile)){
+				throw new ConfigFileNotFoundException($configFile);
 			}
-			$this->_log('Starting: ' . date('Y-m-d H:i:s'));
+			$this->_log('Start: ' . date('Y-m-d H:i:s'));
 			$this->_log('Config File: ' . $this->_configFile);
-			$this->_config = json_decode(file_get_contents($this->_configFile), true);
-
+			$this->_config = json_decode(file_get_contents($configFile), true);
 			$this->_log('Test Config: ' . $this->_config['name']);
 			$this->_configAuth();
 			$this->_configBase();
@@ -88,7 +89,13 @@ namespace TestApiRest
 							'headers' => $header
 						]);	
 					} catch(Exception $e){
-						debug($e);
+						if($e->getCode() == $statusCode){
+							$this->_success($base, $auth, $test);
+							break;
+						}else{
+							$this->_error($base, $auth, $test);
+							break;
+						}
 					}
 
 					if($response->getStatusCode() != $statusCode){
@@ -126,6 +133,7 @@ namespace TestApiRest
 					}
 				}
 			}
+			$this->_log('End: ' . date('Y-m-d H:i:s'));
 			if($this->_hasError){
 				throw new ErrorTestException();
 			}

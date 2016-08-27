@@ -1,6 +1,6 @@
 <?php
 
-use TestApiRest\Debug;
+use PHPatr\Debug;
 
 /**
  * Método para realizar o debug de código
@@ -18,9 +18,10 @@ if(!function_exists('build_phar')){
 		$app = new Phar($name . '.phar', 0, $name . '.phar');
 		$app->startBuffering();
 		foreach($dirs as $dir){
-			$app->buildFromDirectory($dir);
+			$app->buildFromDirectory($dir, '/\.php$/');
 		}
 		$app->setStub($app->createDefaultStub($default));
+		$app->compress(Phar::GZ);
 		$app->stopBuffering();
 	}
 }

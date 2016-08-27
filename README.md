@@ -4,6 +4,8 @@ PHPatr - Api Test REST
 
 Test your API REST on Jenkins based on JSON file!
 
+Easy configuration and secure result!
+
 Installation
 --------------------
 
@@ -14,37 +16,33 @@ Configuration
 
 Configure the file "phpatr.json":
 
-```
+Example:
+
+```json
 {
-	"name": "[NAME OF TESTS]",
+	"name": "Test jsonplaceholder.typicode.com",
 	"base": [
 		{
-			"name": "firstBase",
-			"url": "http://example.cm",
-			"query": {
-				"type": "json"
-			},
-			"header": {
-				"Content-Type": "application/json"
-			}
+			"name": "jsonPlaceholder",
+			"url": "https://jsonplaceholder.typicode.com",
+			"query": {},
+			"header": {}
 		}
 	],
 	"auth": [
 		{
-			"name": "firstAuth",
+			"name": "noAuth",
 			"type": "GET",
-			"query":{
-				"access_token": "xyz"
-			},
+			"query":{},
 			"header": {}
 		}
 	],
 	"tests": [
 		{
-			"name": "First test - list of users",
-			"base": "firstBase",
-			"auth": "firstAuth",
-			"path": "/users",
+			"name": "Test comments",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/comments",
 			"query": {},
 			"header": {},
 			"assert": {
@@ -54,9 +52,41 @@ Configure the file "phpatr.json":
 					{
 						"id": "integer",
 						"name": "string",
-						"email": "string"
+						"body": "string"
 					}
 				]
+			}
+		},
+		{
+			"name": "Test posts",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/posts",
+			"query": {},
+			"header": {},
+			"assert": {
+				"type": "json",
+				"code": 200,
+				"fields": [
+					{
+						"id": "integer",
+						"title": "string",
+						"body": "string"
+					}
+				]
+			}
+		},
+		{
+			"name": "Page error 404",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/error",
+			"query": {},
+			"header": {},
+			"assert": {
+				"type": "json",
+				"code": 404,
+				"fields": {}
 			}
 		}
 	]
@@ -74,11 +104,13 @@ Example return
 --------------------
 
 ```
-LOG: Start: 2016-08-27 01:08:07
-LOG: Config File: phpatr.json
-LOG: Test Config: Teste API Rest
+user@ubuntu /path/to/project> php phpatr.phar --config ./phpatr.json 
+LOG: Start: 2016-08-27 03:13:25
+LOG: Config File: ./phpatr.json
+LOG: Test Config: Test jsonplaceholder.typicode.com
 LOG: Run Tests!
-[ OK ] First Test
-[ OK ] List users
-LOG: End: 2016-08-27 01:09:07
+[ OK ] Test comments
+[ OK ] Test posts
+[ OK ] Page error 404
+LOG: End: 2016-08-27 03:13:26
 ```

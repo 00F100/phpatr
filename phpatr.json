@@ -1,33 +1,27 @@
 {
-	"name": "Teste API Rest",
+	"name": "Test jsonplaceholder.typicode.com",
 	"base": [
 		{
-			"name": "firstBase",
-			"url": "http://gruposo-api.local",
-			"query": {
-				"type": "json"
-			},
-			"header": {
-				"Content-Type": "application/json"
-			}
+			"name": "jsonPlaceholder",
+			"url": "https://jsonplaceholder.typicode.com",
+			"query": {},
+			"header": {}
 		}
 	],
 	"auth": [
 		{
-			"name": "firstAuth",
+			"name": "noAuth",
 			"type": "GET",
-			"query":{
-				"access_token": "xfVlgHIeKolVmSLMfMOpfjqOAEMyLUyTS3XGi9IgkNgHIKxQiwY55MKxnppZKTBIPFOILZCqcqE2OoCY"
-			},
+			"query":{},
 			"header": {}
 		}
 	],
 	"tests": [
 		{
-			"name": "Primeira rota",
-			"base": "firstBase",
-			"auth": "firstAuth",
-			"path": "/grupos/pendentes",
+			"name": "Test comments",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/comments",
 			"query": {},
 			"header": {},
 			"assert": {
@@ -36,17 +30,17 @@
 				"fields": [
 					{
 						"id": "integer",
-						"nome": "string",
-						"icone": "string"
+						"name": "string",
+						"body": "string"
 					}
 				]
 			}
 		},
 		{
-			"name": "Segunda rota",
-			"base": "firstBase",
-			"auth": "firstAuth",
-			"path": "/grupos/pendentes",
+			"name": "Test posts",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/posts",
 			"query": {},
 			"header": {},
 			"assert": {
@@ -55,10 +49,23 @@
 				"fields": [
 					{
 						"id": "integer",
-						"nome": "string",
-						"icone": "string"
+						"title": "string",
+						"body": "string"
 					}
 				]
+			}
+		},
+		{
+			"name": "Page error 404",
+			"base": "jsonPlaceholder",
+			"auth": "noAuth",
+			"path": "/error",
+			"query": {},
+			"header": {},
+			"assert": {
+				"type": "json",
+				"code": 404,
+				"fields": {}
 			}
 		}
 	]
