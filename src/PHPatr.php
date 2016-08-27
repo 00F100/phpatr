@@ -283,11 +283,18 @@ namespace PHPatr
 		private function _help()
 		{
 			echo "   \033[33mUsage:\033[0m\n";
-			echo "	\033[32m php phpatr.phar -c <config file> \033[0m \n\n";
+			echo "        \033[33m Test API REST: \033[0m\n";
+			echo "	\033[32m php phpatr.phar --config <config file> [--output <file>] \033[0m \n\n";
+			echo "        \033[33m Self Update: \033[0m\n";
+			echo "	\033[32m php phpatr.phar --self-update \033[0m \n\n";
+			echo "        \033[33m Help: \033[0m\n";
+			echo "	\033[32m php phpatr.phar --help \033[0m \n\n";
 			echo "	Options:\n";
-			echo "	\033[37m  -c, --config                     File of configuration in JSON to test API REST calls \033[0m \n";
-			echo "	\033[37m  -h, --help                       Show this menu \033[0m \n";
-			echo "	\033[37m  -o, --output                     Output file to save log \033[0m";
+			echo "	\033[37m  -c,  --config                     File of configuration in JSON to test API REST calls \033[0m \n";
+			echo "	\033[37m  -h,  --help                       Show this menu \033[0m \n";
+			echo "	\033[37m  -o,  --output                     Output file to save log \033[0m \n";
+			echo "	\033[37m  -up, --self-update                Upgrade to the latest version version \033[0m \n";
+			echo "	\033[37m  -v,  --version                    Return the installed version of this package \033[0m";
 			die(1);
 		}
 
