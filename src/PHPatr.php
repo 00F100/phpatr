@@ -16,12 +16,12 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.1.0';
+		private $_version = '0.2.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
 		);
-		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar';
+		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar?';
 
 		public function init()
 		{
@@ -328,7 +328,7 @@ namespace PHPatr
 			    try {
 			    	$client = new Client();
 				// $client = new Guzzle\Http\Client();
-				$response = $client->request('GET', $this->_download);
+				$response = $client->request('GET', $this->_download . md5(microtime()));
 				$body = $response->getBody();
 				$phar = array();
 				while (!$body->eof()) {
