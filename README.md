@@ -1,5 +1,5 @@
 
-PHPTar - Test Api Rest
+PHPatr - Api Test REST
 ========================================
 
 Test your API REST on Jenkins based on JSON file!
@@ -7,12 +7,12 @@ Test your API REST on Jenkins based on JSON file!
 Installation
 --------------------
 
-[Download Phar file](https://raw.githubusercontent.com/00F100/phptar/master/dist/phptar.phar)
+[Download Phar file](https://raw.githubusercontent.com/00F100/phpatr/master/dist/phpatr.phar)
 
 Configuration
 --------------------
 
-Configure the file "phptar.json":
+Configure the file "phpatr.json":
 
 ```
 {
@@ -67,7 +67,7 @@ Usage
 --------------------
 
 ```
-$ php phptar.phar  --config ./phptar.json
+$ php phpatr.phar  --config ./phpatr.json
 ```
 
 Example return
@@ -75,7 +75,7 @@ Example return
 
 ```
 LOG: Start: 2016-08-27 01:08:07
-LOG: Config File: phptar.json
+LOG: Config File: phpatr.json
 LOG: Test Config: Teste API Rest
 LOG: Run Tests!
 [ OK ] First Test
