@@ -105,17 +105,81 @@ php phpatr.phar -c <config file>
 	  -o, --output                     Output file to save log 
 ```
 
-Example return
+How to:
 --------------------
 
+Execute test:
+
 ```
-user@ubuntu /path/to/project> php phpatr.phar --config ./phpatr.json 
-LOG: Start: 2016-08-27 03:13:25
-LOG: Config File: ./phpatr.json
-LOG: Test Config: Test jsonplaceholder.typicode.com
-LOG: Run Tests!
-[ OK ] Test comments
-[ OK ] Test posts
-[ OK ] Page error 404
-LOG: End: 2016-08-27 03:13:26
+$ php phpatr.phar --config <config file> [--output <file>]
+
+	Options:
+	  -c,  --config                     File of configuration in JSON to test API REST calls  
+	  -o,  --output                    Output file to save log  
+```
+
+Update:
+
+```
+$ php phpatr.phar --self-update
+```
+
+Help:
+
+```
+$ php phpatr.phar --help
+```
+
+Example "execute test" return success:
+
+```
+user@ubuntu /path/to/project> php phpatr.phar --config phpatr.json
+[SLOG] Start: 2016-08-27 15:40:11 
+[SLOG] Config File: phpatr.json 
+[SLOG] Test Config: Test reqres.in 
+[SLOG] Run Tests! 
+[ OK ] Test users single vetor 
+[ OK ] Test users vector multilevel 
+[ OK ] Example error: Test users vector multilevel 
+[SLOG] End: 2016-08-27 15:40:12 
+
+```
+
+Example "execute test" return error:
+
+```
+user@ubuntu /path/to/project> php phpatr.phar --config phpatr.json
+[SLOG] Start: 2016-08-27 15:40:11 
+[SLOG] Config File: phpatr.json 
+[SLOG] Test Config: Test reqres.in 
+[SLOG] Run Tests! 
+[ OK ] Test users single vetor 
+[ OK ] Test users vector multilevel 
+[FAIL] Example error: Test users vector multilevel 
+[FLOG] The tests[]->assert->fields does not match to test 
+[SLOG] End: 2016-08-27 15:40:12 
+
+```
+
+Example "help"
+
+```
+joao@joao /m/j/2/96-php-scripts> php phpatr.phar -h
+   Usage:
+         Test API REST: 
+	 php phpatr.phar --config <config file> [--output <file>]  
+
+         Self Update: 
+	 php phpatr.phar --self-update  
+
+         Help: 
+	 php phpatr.phar --help  
+
+	Options:
+	  -c,  --config                     File of configuration in JSON to test API REST calls  
+	  -h,  --help                       Show this menu  
+	  -o,  --output                     Output file to save log  
+	  -u, --self-update                Upgrade to the latest version version  
+	  -v,  --version                    Return the installed version of this package
+
 ```

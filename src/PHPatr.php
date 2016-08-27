@@ -16,12 +16,13 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.2.0';
+		private $_version = '0.3.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
 		);
 		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar?';
+		private $_error = array();
 
 		public function init()
 		{
@@ -41,7 +42,7 @@ namespace PHPatr
 					case '--output':
 						$this->_saveFile = next($args);
 						break;
-					case '-up':
+					case '-u':
 					case '--self-update':
 						$this->_selfUpdate();
 						break;
@@ -49,8 +50,8 @@ namespace PHPatr
 					case '--version':
 						$this->_version();
 						break;
-					case '--help':
 					case '-h':
+					case '--help':
 						$this->_help();
 						break;
 				}
@@ -82,41 +83,31 @@ namespace PHPatr
 
 			if(count($this->_config['tests']) > 0){
 				foreach($this->_config['tests'] as $test){
-
 					$base = $this->_bases[$test['base']];
 					$auth = $this->_auths[$test['auth']];
-
 					$header = [];
 					$query = [];
-
 					if(array_key_exists('header', $base)){
 						$header = array_merge($header, $base['header']);
 					}
 					if(array_key_exists('query', $base)){
 						$query = array_merge($query, $base['query']);
 					}
-
 					if(array_key_exists('header', $auth)){
 						$header = array_merge($header, $auth['header']);
 					}
 					if(array_key_exists('query', $auth)){
 						$query = array_merge($query, $auth['query']);
 					}
-
-					// debug(compact('header', 'query'));
-
 					$this->_client = new Client([
 						'base_uri' => $base['url'],
 						'timeout' => 10,
 						'allow_redirects' => false,
 					]);
-
 					$assert = $test['assert'];
-
 					$statusCode = $assert['code'];
-
 					try {
-						$response = $this->_client->request('GET', $test['path'], [
+						$response = $this->_client->request($test['method'], $test['path'], [
 							'query' => $query,
 							'headers' => $header
 						]);	
@@ -125,12 +116,14 @@ namespace PHPatr
 							$this->_success($base, $auth, $test);
 							break;
 						}else{
+							$this->_error[] = 'The status code does not match the assert';
 							$this->_error($base, $auth, $test);
 							break;
 						}
 					}
 
 					if($response->getStatusCode() != $statusCode){
+						$this->_error[] = 'The status code does not match the assert';
 						$this->_error($base, $auth, $test);
 						break;
 					}
@@ -148,16 +141,16 @@ namespace PHPatr
 								(substr($json, 0, 1) == '[' && substr($json, -1) == ']')
 							){
 								$json = json_decode($json, true);
-
 								if(!$this->_parseJson($assert['fields'], $json)){
+									$this->_error[] = 'The tests[]->assert->fields does not match to test';
 									$this->_error($base, $auth, $test);
 									break;
 								}else{
 									$this->_success($base, $auth, $test);
 									break;
 								}
-
 							}else{
+								$this->_error[] = 'The response of HTTP server no corresponds to a valid JSON format';
 								$this->_error($base, $auth, $test);
 								break;
 							}
@@ -166,6 +159,7 @@ namespace PHPatr
 				}
 			}
 			$this->_log('End: ' . date('Y-m-d H:i:s'));
+			die(0);
 			if($this->_hasError){
 				throw new ErrorTestException();
 			}
@@ -187,7 +181,7 @@ namespace PHPatr
 							return $this->_parseJson($valueRequired, $valueJson);
 						}else{
 
-							if(is_array($valueRequired) || is_array($valueJson)){
+							if(is_array($valueRequired) || is_array($valueJson) && $indexJson == $indexRequired){
 								$error = true;
 							}else{
 								if($indexJson == $indexRequired){
@@ -234,12 +228,12 @@ namespace PHPatr
 
 		private function _log($message, $array = false)
 		{
-			echo "LOG: \033[33m$message\033[0m \n";
+			echo "[\033[33mS\033[0m\033[30mLOG\033[0m] \033[33m$message\033[0m \n";
 			if($array && is_array($array)){
 				print_r($array);
 			}
 			if($this->_saveFile){
-				$this->_logFile('LOG: ' . $message . "\n");
+				$this->_logFile('[LOG ] ' . $message . "\n");
 			}
 		}
 
@@ -247,6 +241,12 @@ namespace PHPatr
 		{
 			$this->_hasError = 1;
 			echo "[\033[31mFAIL\033[0m] " . $test['name'] . " \n";
+			if(count($this->_error) > 0){
+				foreach($this->_error as $run_error){
+					echo "[\033[31mF\033[0m\033[30mLOG\033[0m] $run_error \n";
+				}
+				$this->_error = array();
+			}
 			if($this->_saveFile){
 				$this->_logFile('[FAIL] ' . $test['name'] . "\n");
 			}
@@ -271,7 +271,7 @@ namespace PHPatr
 		private function _logFile($message)
 		{
 			$fopen = fopen($this->_saveFile, 'a');
-			fwrite($fopen, 'LOG: ' . $message);
+			fwrite($fopen, '[LOG ] ' . $message);
 			fclose($fopen);
 		}
 
@@ -293,7 +293,7 @@ namespace PHPatr
 			echo "	\033[37m  -c,  --config                     File of configuration in JSON to test API REST calls \033[0m \n";
 			echo "	\033[37m  -h,  --help                       Show this menu \033[0m \n";
 			echo "	\033[37m  -o,  --output                     Output file to save log \033[0m \n";
-			echo "	\033[37m  -up, --self-update                Upgrade to the latest version version \033[0m \n";
+			echo "	\033[37m  -u, --self-update                Upgrade to the latest version version \033[0m \n";
 			echo "	\033[37m  -v,  --version                    Return the installed version of this package \033[0m";
 			die(1);
 		}
@@ -371,21 +371,21 @@ namespace PHPatr
 						unlink($pharFile);
 					 	$this->_true('Removing temporary file');
 						$this->_true('PHPatr updated to: ' . $version);
-				     	die();
+				     	die(0);
 				 } catch (Exception $e) {
 					$this->_error('Downloading new version');
-				     	die();
+				     	die(1);
 				 }
 			}else{
 				$this->_log('Your version is updated');
-			     	die();
+			     	die(0);
 			}
 		}
 
 		private function _version()
 		{
 			echo $this->_version;
-			die();
+			die(0);
 		}
 	}
 }
