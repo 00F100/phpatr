@@ -16,7 +16,7 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.3.0';
+		private $_version = '0.4.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
