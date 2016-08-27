@@ -78,7 +78,7 @@ LOG: Start: 2016-08-27 01:08:07
 LOG: Config File: phptar.json
 LOG: Test Config: Teste API Rest
 LOG: Run Tests!
-[ OK ] Primeira rota
-[ OK ] Segunda rota
+[ OK ] First Test
+[ OK ] List users
 LOG: End: 2016-08-27 01:09:07
 ```
