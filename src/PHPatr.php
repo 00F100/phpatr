@@ -6,6 +6,8 @@ namespace PHPatr
 	use Exception;
 	use GuzzleHttp\Client;
 	use PHPatr\Exceptions\ConfigFileNotFoundException;
+	use PHPatr\Exceptions\ConfigFileEmptyException;
+	use PHPatr\Exceptions\OutputFileEmptyException;
 	use PHPatr\Exceptions\ErrorTestException;
 
 	class PHPatr
@@ -16,7 +18,7 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.6.0';
+		private $_version = '0.7.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
@@ -58,6 +60,7 @@ namespace PHPatr
 						break;
 					case '-h':
 					case '--help':
+						$this->_echoWelcome();
 						$this->_help();
 						break;
 					case '-v':
@@ -68,8 +71,10 @@ namespace PHPatr
 				next($args);
 			}
 			if(!$configured){
+				$this->_echoWelcome();
 				$this->_help();
 			}
+			$this->_echoWelcome();
 			if($this->_saveFile){
 				$this->_resetLogFile();
 			}
@@ -79,6 +84,9 @@ namespace PHPatr
 
 		private function _run()
 		{
+			if(empty($this->_configFile)){
+				throw new ConfigFileEmptyException();
+			}
 			$configFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . $this->_configFile;
 			if(!is_file($configFile)){
 				throw new ConfigFileNotFoundException($configFile);
@@ -190,22 +198,39 @@ namespace PHPatr
 										$this->_error[] = 'The tests[]->assert->fields does not match to test';
 										$this->_error($base, $auth, $test);
 										if($this->_debug){
+
 											$this->_log('JSON config');
 											print_r($assert['fields'], false);
+											if($this->_saveFile){
+												$this->_logFile(print_r($assert['fields'], true));
+											}
 											echo "\n";
+
 											$this->_log('JSON response');
 											print_r($json, false);
+											if($this->_saveFile){
+												$this->_logFile(print_r($json, true));
+											}
+
 											echo "\n======================\n\n";
 										}
 										continue;
 									}else{
 										$this->_success($base, $auth, $test);
 										if($this->_debug){
+
 											$this->_log('JSON config');
 											print_r($assert['fields'], false);
+											if($this->_saveFile){
+												$this->_logFile(print_r($assert['fields'], true));
+											}
 											echo "\n";
+
 											$this->_log('JSON response');
 											print_r($json, false);
+											if($this->_saveFile){
+												$this->_logFile(print_r($json, true));
+											}
 											echo "\n======================\n\n";
 										}
 										continue;
@@ -214,22 +239,36 @@ namespace PHPatr
 									$this->_error[] = 'The response of HTTP server no corresponds to a valid JSON format';
 									$this->_error($base, $auth, $test);
 									if($this->_debug){
+
 										$this->_log('JSON config');
 										print_r($assert['fields'], false);
+										if($this->_saveFile){
+											$this->_logFile(print_r($assert['fields'], true));
+										}
 										echo "\n";
+
 										$this->_log('JSON response');
 										print_r($json, false);
-											echo "\n======================\n\n";
+										if($this->_saveFile){
+											$this->_logFile(print_r($json, true));
+										}
+										echo "\n======================\n\n";
 									}
 									continue;
 								}
 								if($this->_debug){
 									$this->_log('JSON config');
 									print_r($assert['fields'], false);
+									if($this->_saveFile){
+										$this->_logFile(print_r($assert['fields'], true));
+									}
 									echo "\n";
 									$this->_log('JSON response');
 									print_r($json, false);
-											echo "\n======================\n\n";
+									if($this->_saveFile){
+										$this->_logFile(print_r($json, true));
+									}
+									echo "\n======================\n\n";
 								}
 								continue;
 						}
@@ -238,10 +277,17 @@ namespace PHPatr
 						if($this->_debug){
 							$this->_log('JSON config');
 							print_r($assert['fields'], false);
+							if($this->_saveFile){
+								$this->_logFile(print_r($assert['fields'], true));
+							}
 							echo "\n";
+
 							$this->_log('JSON response');
 							if(isset($json)){
 								print_r($json, false);
+								if($this->_saveFile){
+									$this->_logFile(print_r($json, true));
+								}
 							}
 							echo "\n======================\n\n";
 						}
@@ -282,40 +328,13 @@ namespace PHPatr
 							$success[] = $field;
 						}
 					}
-					
-
-					// foreach($json as $indexJson => $valueJson){
-
-						// if(is_array($valueRequired) && is_array($valueJson)){
-						// 	return $this->_parseJson($valueRequired, $valueJson);
-						// }else{
-
-						// 	if(is_array($valueRequired) || is_array($valueJson)){
-						// 		$error = true;
-						// 	}else{
-						// 		if($indexJson == $indexRequired){
-						// 			if($valueRequired != gettype($valueJson)){
-						// 					$error = true;
-						// 			}else{
-						// 				$success[] = $valueJson;
-						// 			}
-						// 		}
-								
-						// 	}
-							
-						// }
-					// }
-					
 				}
-
 				if($error){
 					return false;
 				}
-
 				if(count($success) == count($required)){
 					return true;
 				}
-				
 			}
 		}
 
@@ -340,10 +359,18 @@ namespace PHPatr
 			echo "[\033[33mS\033[0m\033[30mLOG\033[0m] \033[33m$message\033[0m \n";
 			if($array && is_array($array)){
 				print_r($array);
+				if($this->_saveFile){
+					$this->_logFile(print_r($array, true));
+				}
 			}
 			if($this->_saveFile){
-				$this->_logFile('[LOG ] ' . $message . "\n");
+				$this->_logFile('[SLOG] ' . $message . "\n");
 			}
+		}
+
+		private function _echoWelcome()
+		{
+			echo "\033[33mPHPatr version " . $this->_version . "\033[0m\n";
 		}
 
 		private function _error($base, $auth, $test)
@@ -379,14 +406,19 @@ namespace PHPatr
 
 		private function _logFile($message)
 		{
+			if(empty($this->_saveFile)){
+				throw new OutputFileEmptyException();
+			}
 			$fopen = fopen($this->_saveFile, 'a');
-			fwrite($fopen, '[LOG ] ' . $message);
+			fwrite($fopen, $message);
 			fclose($fopen);
 		}
 
 		private function _resetLogFile()
 		{
-			unlink($this->_saveFile);
+			if(is_file($this->_saveFile)){
+				unlink($this->_saveFile);
+			}
 		}
 
 		private function _help()
@@ -462,7 +494,6 @@ namespace PHPatr
 
 			if($_local_version < $_cdn_version){
 				$pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
-				// $toFile = __DIR__ . '/dist/phpatr-updated.phar';
 				 try {
 				 	$client = new Client();
 				 	$this->_log('Downloading new version');
