@@ -24,7 +24,6 @@ namespace PHPatr
 			'path' => '/00F100/phpatr/master/dist/version',
 		);
 		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar?';
-		private $_downloadConfig = 'https://github.com/00F100/phpatr/raw/master/phpatr.json';
 		private $_error = array();
 		private $_debug = false;
 
