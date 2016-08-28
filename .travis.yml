@@ -4,4 +4,6 @@ php:
 script:
   - composer install
   - php ./create_phar.php
-  - git status
+  - git add dist/phpatr.phar.gz
+  - git commit -m "Travis CI - update phpatr.phar"
+  - git push
