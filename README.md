@@ -132,14 +132,13 @@ PHPatr version 0.7.0
 	 php phpatr.phar --help  
 
 	Options:
-	  -d,  --debug                    		Debug the calls to API REST  
+	  -d,  --debug                    			Debug the calls to API REST  
 	  -c,  --config                     		File of configuration in JSON to test API REST calls  
 	  -e,  --example-config-json         		Generate a example file JSON to configuration  
 	  -o,  --output                     		Output file to save log  
 	  -u,  --self-update                		Upgrade to the latest version version  
 	  -v,  --version                    		Return the installed version of this package  
-	  -h,  --help                      		Show this menu  
-jo
+	  -h,  --help                      			Show this menu  
 ```
 
 How to:
