@@ -3,5 +3,4 @@ php:
   - 5.5
   - 5.6
   - 7.0
-  install:
-  - php create_phar.php
+script: php ./create_phar.php
