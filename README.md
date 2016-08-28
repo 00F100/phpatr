@@ -1,11 +1,7 @@
 
 PHPatr - Simple Api Test REST
 
-Travis
 [![Build Status](https://travis-ci.org/00F100/phpatr.svg?branch=master)](https://travis-ci.org/00F100/phpatr)
-
-Jenkins to generate Phar
-[![Build Status](http://build.grugoo.com:9801/buildStatus/icon?job=phpatr.phar&build=7)](http://build.grugoo.com:9801/job/phpatr.phar/7/)
 
 ========================================
 
