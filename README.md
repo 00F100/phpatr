@@ -117,12 +117,29 @@ Usage
 --------------------
 
 ```
-php phpatr.phar -c <config file>  
+PHPatr version 0.7.0
+   Usage:
+         Test API REST: 
+	 php phpatr.phar --config <config file> [--output <file>, [--debug]]  
+
+         Generate example JSON configuration: 
+	 php phpatr.phar --example-config-json  
+
+         Self Update: 
+	 php phpatr.phar --self-update  
+
+         Help: 
+	 php phpatr.phar --help  
 
 	Options:
-	  -c, --config                     File of configuration in JSON to test API REST calls  
-	  -h, --help                       Show this menu  
-	  -o, --output                     Output file to save log 
+	  -d,  --debug                    		Debug the calls to API REST  
+	  -c,  --config                     		File of configuration in JSON to test API REST calls  
+	  -e,  --example-config-json         		Generate a example file JSON to configuration  
+	  -o,  --output                     		Output file to save log  
+	  -u,  --self-update                		Upgrade to the latest version version  
+	  -v,  --version                    		Return the installed version of this package  
+	  -h,  --help                      		Show this menu  
+jo
 ```
 
 How to:
