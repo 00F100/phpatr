@@ -16,13 +16,15 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.5.0';
+		private $_version = '0.6.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
 		);
 		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar?';
+		private $_downloadConfig = 'https://github.com/00F100/phpatr/raw/master/phpatr.json';
 		private $_error = array();
+		private $_debug = false;
 
 		public function init()
 		{
@@ -38,6 +40,10 @@ namespace PHPatr
 						$this->_configFile = next($args);
 						$configured = true;
 						break;
+					case '-e':
+					case '--example-config-json':
+						$this->_exampleConfigJson();
+						break;
 					case '-o':
 					case '--output':
 						$this->_saveFile = next($args);
@@ -46,13 +52,17 @@ namespace PHPatr
 					case '--self-update':
 						$this->_selfUpdate();
 						break;
-					case '-v':
-					case '--version':
-						$this->_version();
+					case '-d':
+					case '--debug':
+						$this->_debug = true;
 						break;
 					case '-h':
 					case '--help':
 						$this->_help();
+						break;
+					case '-v':
+					case '--version':
+						$this->_version();
 						break;
 				}
 				next($args);
@@ -82,16 +92,21 @@ namespace PHPatr
 			$this->_log('Run Tests!');
 
 			if(count($this->_config['tests']) > 0){
-				foreach($this->_config['tests'] as $test){
+				foreach($this->_config['tests'] as $index => $test){
+					// debug($this->_config['tests'], false);
 					$base = $this->_bases[$test['base']];
 					$auth = $this->_auths[$test['auth']];
 					$header = [];
 					$query = [];
+					$data = [];
 					if(array_key_exists('header', $base)){
 						$header = array_merge($header, $base['header']);
 					}
 					if(array_key_exists('query', $base)){
 						$query = array_merge($query, $base['query']);
+					}
+					if(array_key_exists('data', $base)){
+						$data = array_merge($data, $base['data']);
 					}
 					if(array_key_exists('header', $auth)){
 						$header = array_merge($header, $auth['header']);
@@ -99,6 +114,13 @@ namespace PHPatr
 					if(array_key_exists('query', $auth)){
 						$query = array_merge($query, $auth['query']);
 					}
+					if(array_key_exists('data', $auth)){
+						$data = array_merge($data, $auth['data']);
+					}
+					if(array_key_exists('data', $test)){
+						$data = array_merge($data, $test['data']);
+					}
+
 					$this->_client = new Client([
 						'base_uri' => $base['url'],
 						'timeout' => 10,
@@ -106,55 +128,124 @@ namespace PHPatr
 					]);
 					$assert = $test['assert'];
 					$statusCode = $assert['code'];
+					$break = true;
 					try {
-						$response = $this->_client->request($test['method'], $test['path'], [
-							'query' => $query,
-							'headers' => $header
-						]);	
+						if($test['method'] == 'POST' || $test['method'] == 'PUT'){
+							$response = $this->_client->request($test['method'], $test['path'], [
+								'query' => $query,
+								'headers' => $header,
+								'json' => $data,
+							]);
+						}else{
+							$response = $this->_client->request($test['method'], $test['path'], [
+								'query' => $query,
+								'headers' => $header,
+							]);
+						}
+						$break = false;
 					} catch(Exception $e){
 						if($e->getCode() == $statusCode){
 							$this->_success($base, $auth, $test);
-							break;
+							if($this->_debug){
+								if(array_key_exists('fields', $assert)){
+									$this->_log('JSON config');
+									print_r($assert['fields'], false);
+									echo "\n";
+								}
+								$this->_log('JSON response');
+								if(isset($json)){
+									print_r($json, false);
+								}
+								echo "\n======================\n\n";
+							}
 						}else{
 							$this->_error[] = 'The status code does not match the assert';
 							$this->_error($base, $auth, $test);
-							break;
 						}
+						continue;
 					}
 
 					if($response->getStatusCode() != $statusCode){
 						$this->_error[] = 'The status code does not match the assert';
 						$this->_error($base, $auth, $test);
-						break;
+						
+						continue;
 					}
 
-					switch($assert['type']){
-						case 'json':
-							$body = $response->getBody();
-							$json = array();
-							while (!$body->eof()) {
-								$json[] = $body->read(1024);
-							}
-							$json = implode($json);
-							if(
-								(substr($json, 0, 1) == '{' && substr($json, -1) == '}') ||
-								(substr($json, 0, 1) == '[' && substr($json, -1) == ']')
-							){
-								$json = json_decode($json, true);
-								if(!$this->_parseJson($assert['fields'], $json)){
-									$this->_error[] = 'The tests[]->assert->fields does not match to test';
-									$this->_error($base, $auth, $test);
-									break;
-								}else{
-									$this->_success($base, $auth, $test);
-									break;
+					if(array_key_exists('type', $assert)){
+						switch($assert['type']){
+							case 'json':
+								$body = $response->getBody();
+								$json = array();
+								while (!$body->eof()) {
+									$json[] = $body->read(1024);
 								}
-							}else{
-								$this->_error[] = 'The response of HTTP server no corresponds to a valid JSON format';
-								$this->_error($base, $auth, $test);
-								break;
+								$json = trim(implode($json));
+								if(
+									(substr($json, 0, 1) == '{' && substr($json, -1) == '}') ||
+									(substr($json, 0, 1) == '[' && substr($json, -1) == ']')
+								){
+									$json = json_decode($json, true);
+									if(!$this->_parseJson($assert['fields'], $json)){
+										$this->_error[] = 'The tests[]->assert->fields does not match to test';
+										$this->_error($base, $auth, $test);
+										if($this->_debug){
+											$this->_log('JSON config');
+											print_r($assert['fields'], false);
+											echo "\n";
+											$this->_log('JSON response');
+											print_r($json, false);
+											echo "\n======================\n\n";
+										}
+										continue;
+									}else{
+										$this->_success($base, $auth, $test);
+										if($this->_debug){
+											$this->_log('JSON config');
+											print_r($assert['fields'], false);
+											echo "\n";
+											$this->_log('JSON response');
+											print_r($json, false);
+											echo "\n======================\n\n";
+										}
+										continue;
+									}
+								}else{
+									$this->_error[] = 'The response of HTTP server no corresponds to a valid JSON format';
+									$this->_error($base, $auth, $test);
+									if($this->_debug){
+										$this->_log('JSON config');
+										print_r($assert['fields'], false);
+										echo "\n";
+										$this->_log('JSON response');
+										print_r($json, false);
+											echo "\n======================\n\n";
+									}
+									continue;
+								}
+								if($this->_debug){
+									$this->_log('JSON config');
+									print_r($assert['fields'], false);
+									echo "\n";
+									$this->_log('JSON response');
+									print_r($json, false);
+											echo "\n======================\n\n";
+								}
+								continue;
+						}
+					}else{
+						$this->_success($base, $auth, $test);
+						if($this->_debug){
+							$this->_log('JSON config');
+							print_r($assert['fields'], false);
+							echo "\n";
+							$this->_log('JSON response');
+							if(isset($json)){
+								print_r($json, false);
 							}
-							break;
+							echo "\n======================\n\n";
+						}
+						continue;
 					}
 				}
 			}
@@ -170,36 +261,55 @@ namespace PHPatr
 			if(is_array($required) && is_array($json)){
 
 				$findFields = array();
+				$success = array();
+				$error = false;
 
 				foreach($required as $indexRequired => $valueRequired){
 
-					$error = false;
-
-					foreach($json as $indexJson => $valueJson){
-
-						if(is_array($valueRequired) && is_array($valueJson)){
-							return $this->_parseJson($valueRequired, $valueJson);
+					if(!array_key_exists($indexRequired, $json)){
+						$error = true;
+					}
+					$field = $json[$indexRequired];
+					if(is_array($valueRequired)){
+						if(is_array($field)){
+							return $this->_parseJson($valueRequired, $field);
 						}else{
-
-							if(is_array($valueRequired) || is_array($valueJson) && $indexJson == $indexRequired){
-								$error = true;
-							}else{
-								if($indexJson == $indexRequired){
-									if($valueRequired != gettype($valueJson)){
-											$error = true;
-									}else{
-										$success[] = $valueJson;
-									}
-								}
-							}
-							
+							$error = true;
+						}
+						
+					}else{
+						if(gettype($field) == $valueRequired){
+							$success[] = $field;
 						}
 					}
-
-					if($error){
-						return false;
-					}
 					
+
+					// foreach($json as $indexJson => $valueJson){
+
+						// if(is_array($valueRequired) && is_array($valueJson)){
+						// 	return $this->_parseJson($valueRequired, $valueJson);
+						// }else{
+
+						// 	if(is_array($valueRequired) || is_array($valueJson)){
+						// 		$error = true;
+						// 	}else{
+						// 		if($indexJson == $indexRequired){
+						// 			if($valueRequired != gettype($valueJson)){
+						// 					$error = true;
+						// 			}else{
+						// 				$success[] = $valueJson;
+						// 			}
+						// 		}
+								
+						// 	}
+							
+						// }
+					// }
+					
+				}
+
+				if($error){
+					return false;
 				}
 
 				if(count($success) == count($required)){
@@ -207,7 +317,6 @@ namespace PHPatr
 				}
 				
 			}
-			return false;
 		}
 
 		private function _configAuth()
@@ -284,18 +393,22 @@ namespace PHPatr
 		{
 			echo "   \033[33mUsage:\033[0m\n";
 			echo "        \033[33m Test API REST: \033[0m\n";
-			echo "	\033[32m php phpatr.phar --config <config file> [--output <file>] \033[0m \n\n";
+			echo "	\033[32m php phpatr.phar --config <config file> [--output <file>, [--debug]] \033[0m \n\n";
+			echo "        \033[33m Generate example JSON configuration: \033[0m\n";
+			echo "	\033[32m php phpatr.phar --example-config-json \033[0m \n\n";
 			echo "        \033[33m Self Update: \033[0m\n";
 			echo "	\033[32m php phpatr.phar --self-update \033[0m \n\n";
 			echo "        \033[33m Help: \033[0m\n";
 			echo "	\033[32m php phpatr.phar --help \033[0m \n\n";
 			echo "	Options:\n";
-			echo "	\033[37m  -c,  --config                     File of configuration in JSON to test API REST calls \033[0m \n";
-			echo "	\033[37m  -h,  --help                       Show this menu \033[0m \n";
-			echo "	\033[37m  -o,  --output                     Output file to save log \033[0m \n";
-			echo "	\033[37m  -u, --self-update                Upgrade to the latest version version \033[0m \n";
-			echo "	\033[37m  -v,  --version                    Return the installed version of this package \033[0m";
-			die(1);
+			echo "	\033[37m  -d,  --debug                    		Debug the calls to API REST \033[0m \n";
+			echo "	\033[37m  -c,  --config                     		File of configuration in JSON to test API REST calls \033[0m \n";
+			echo "	\033[37m  -e,  --example-config-json         		Generate a example file JSON to configuration \033[0m \n";
+			echo "	\033[37m  -o,  --output                     		Output file to save log \033[0m \n";
+			echo "	\033[37m  -u,  --self-update                		Upgrade to the latest version version \033[0m \n";
+			echo "	\033[37m  -v,  --version                    		Return the installed version of this package \033[0m \n";
+			echo "	\033[37m  -h,  --help                      		Show this menu \033[0m \n";
+			die(0);
 		}
 
 		private function _checkUpdate($returnVersion = false)
@@ -386,6 +499,20 @@ namespace PHPatr
 		{
 			echo $this->_version;
 			die(0);
+		}
+
+		private function _exampleConfigJson()
+		{
+		 	$this->_log('Loading example file');
+			$content = file_get_contents('phpatr.json');
+		 	$this->_true('Loading example file');
+		 	$this->_log('Save new file in: "./phpatr.json"');
+			$jsonFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr.json';
+			$fopen = fopen($jsonFile, 'w');
+			fwrite($fopen, $content);
+			fclose($fopen);
+		 	$this->_true('Save new file in: "./phpatr.json"');
+	     		die(0);
 		}
 	}
 }

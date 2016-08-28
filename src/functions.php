@@ -18,7 +18,7 @@ if(!function_exists('build_phar')){
 		$app = new Phar($name . '.phar', 0, $name . '.phar');
 		$app->startBuffering();
 		foreach($dirs as $dir){
-			$app->buildFromDirectory($dir, '/\.php$/');
+			$app->buildFromDirectory($dir, '/\.php|json$/');
 		}
 		$app->setStub($app->createDefaultStub($default));
 		$app->compress(Phar::GZ);
