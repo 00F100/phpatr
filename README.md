@@ -1,5 +1,8 @@
 
 PHPatr - Simple Api Test REST
+
+[![Build Status](https://travis-ci.org/00F100/phpatr.svg?branch=master)](https://travis-ci.org/00F100/phpatr)
+
 ========================================
 
 Test your API REST on Jenkins based on JSON file!
