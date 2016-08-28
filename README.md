@@ -29,8 +29,8 @@ Example:
 	"name": "Test reqres.in",
 	"base": [
 		{
-			"name": "reqres.in",
-			"url": "http://reqres.in",
+			"name": "httpbin.org",
+			"url": "http://httpbin.org",
 			"query": {},
 			"header": {}
 		}
@@ -39,83 +39,74 @@ Example:
 		{
 			"name": "noAuth",
 			"query":{},
-			"header": {}
+			"header": {},
+			"data": {}
 		}
 	],
 	"tests": [
 		{
-			"name": "Test users single vetor",
-			"base": "reqres.in",
+			"name": "Test to get IP",
+			"base": "httpbin.org",
 			"auth": "noAuth",
-			"path": "/api/users",
+			"path": "/ip",
 			"method": "GET",
-			"query": {
-				"page": 2
-			},
+			"query": {},
 			"header": {},
+			"data": {},
 			"assert": {
 				"type": "json",
 				"code": 200,
 				"fields": {
-					"page": "integer",
-					"per_page": "integer",
-					"total": "integer",
-					"total_pages": "integer"
+					"origin": "string"
 				}
 			}
 		},
 		{
-			"name": "Test users vector multilevel",
-			"base": "reqres.in",
+			"name": "Test to POST data",
+			"base": "httpbin.org",
 			"auth": "noAuth",
-			"path": "/api/users",
-			"method": "GET",
-			"query": {
-				"page": 2
-			},
+			"path": "/post",
+			"method": "POST",
+			"query": {},
 			"header": {},
+			"data": {
+				"posttest": "return to post"
+			},
 			"assert": {
 				"type": "json",
 				"code": 200,
 				"fields": {
-					"page": "integer",
-					"per_page": "integer",
-					"total": "integer",
-					"total_pages": "integer",
-					"data": [
-						{
-							"id": "integer",
-							"first_name": "string"
-						}
-					]
+					"data": "string",
+					"json": {
+						"posttest": "string"
+					}
 				}
 			}
 		},
 		{
-			"name": "Example error: Test users vector multilevel",
-			"base": "reqres.in",
+			"name": "Test not found 404",
+			"base": "httpbin.org",
 			"auth": "noAuth",
-			"path": "/api/users",
+			"path": "/status/404",
 			"method": "GET",
-			"query": {
-				"page": 2
-			},
+			"query": {},
 			"header": {},
+			"data": {},
 			"assert": {
-				"type": "json",
-				"code": 200,
-				"fields": {
-					"page": "integer",
-					"per_page": "integer",
-					"total": "integer",
-					"total_pages": "integer",
-					"data": [
-						{
-							"id": "integer",
-							"first_name": "integer"
-						}
-					]
-				}
+				"code": 404
+			}
+		},
+		{
+			"name": "Test status teapot",
+			"base": "httpbin.org",
+			"auth": "noAuth",
+			"path": "/status/418",
+			"method": "GET",
+			"query": {},
+			"header": {},
+			"data": {},
+			"assert": {
+				"code": 418
 			}
 		}
 	]
