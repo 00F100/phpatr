@@ -2,5 +2,5 @@ language: php
 php:
   - 5.5
 script:
-  - php composer install
+  - composer install
   - php ./create_phar.php
