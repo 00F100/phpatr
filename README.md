@@ -1,5 +1,5 @@
 
-PHPatr - Api Test REST
+PHPatr - Simple Api Test REST
 ========================================
 
 Test your API REST on Jenkins based on JSON file!
@@ -194,28 +194,5 @@ user@ubuntu /path/to/project> php phpatr.phar --config phpatr.json
 [FAIL] Example error: Test users vector multilevel 
 [FLOG] The tests[]->assert->fields does not match to test 
 [SLOG] End: 2016-08-27 15:40:12 
-
-```
-
-Example "help"
-
-```
-user@ubuntu /m/j/2/96-php-scripts> php phpatr.phar -h
-   Usage:
-         Test API REST: 
-	 php phpatr.phar --config <config file> [--output <file>]  
-
-         Self Update: 
-	 php phpatr.phar --self-update  
-
-         Help: 
-	 php phpatr.phar --help  
-
-	Options:
-	  -c,  --config                     File of configuration in JSON to test API REST calls  
-	  -h,  --help                       Show this menu  
-	  -o,  --output                     Output file to save log  
-	  -u, --self-update                Upgrade to the latest version version  
-	  -v,  --version                    Return the installed version of this package
 
 ```
