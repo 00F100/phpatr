@@ -4,8 +4,3 @@ php:
 script:
   - composer install
   - php ./create_phar.php
-  - git branch travis
-  - git checkout travis
-  - git add dist/phpatr.phar.gz
-  - git commit -m "Travis CI - update phpatr.phar"
-  - git pull-request
