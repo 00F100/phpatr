@@ -7,8 +7,6 @@ namespace PHPatr\Test\TestCase
 
 	class PHPatrTest extends PHPunit
 	{
-		const MD5_HELP = 'bd121953221dea860e514b99f5eb0ef9';
-
 		private $_PHPatr;
 
 		public function __construct()
@@ -19,19 +17,54 @@ namespace PHPatr\Test\TestCase
 		public function testHelp()
 		{
 			$output = $this->_PHPatr->init('-h');
-			$this->assertTrue(strpos($output, 'PHPatr version 0.8.0') !== false);
+			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
 		}
 
 		public function testVersion()
 		{
 			$output = $this->_PHPatr->init('-v');
-			$this->assertTrue($output == '0.8.0');
+			$this->assertTrue($output == '0.9.0');
 		}
 
 		public function testExample()
 		{
 			$output = $this->_PHPatr->init('-e');
 			$this->assertTrue(strpos($output, 'Save new file in: "./phpatr.json"') !== false);
+		}
+
+		public function testSelfUpdate()
+		{
+			$output = $this->_PHPatr->init('-u');
+			// debug($output);
+			$this->assertTrue(strpos($output, 'Your version is updated') !== false);
+		}
+
+		/**
+		  * @expectedException     PHPatr\Exceptions\PHpatrException
+		  */
+		public function testConfigNoFileException()
+		{
+			$output = $this->_PHPatr->init('-c');
+		}
+
+		/**
+		  * @expectedException     PHPatr\Exceptions\ConfigFileNotFoundException
+		  */
+		public function testConfigFileNotFoundException()
+		{
+			$output = $this->_PHPatr->init('-c', 'filenotfound');
+		}
+
+		public function testConfigSuccess()
+		{
+			$output = $this->_PHPatr->init('-c', 'phpatr.json');
+			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
+		}
+
+		public function testConfigSuccessOutput()
+		{
+			$output = $this->_PHPatr->init('-c', 'phpatr.json', '-o', 'log');
+			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
 		}
 	}
 }

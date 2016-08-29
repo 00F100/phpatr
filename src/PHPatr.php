@@ -18,7 +18,7 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.8.0';
+		private $_version = '0.9.0';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
@@ -305,10 +305,10 @@ namespace PHPatr
 			if(php_sapi_name() != 'cli' || $this->_return_logs){
 				return implode($this->_echo);
 			}
-			die(0);
 			if($this->_hasError){
 				throw new ErrorTestException();
 			}
+			die(0);
 		}
 
 		private function _parseJson($required, $json)
@@ -527,13 +527,22 @@ namespace PHPatr
 						unlink($pharFile);
 					 	$this->_true('Removing temporary file');
 						$this->_true('PHPatr updated to: ' . $version);
+					if(php_sapi_name() != 'cli' || $this->_return_logs){
+						return implode($this->_echo);
+					}
 				     	die(0);
 				 } catch (Exception $e) {
 					$this->_error('Downloading new version');
+					if(php_sapi_name() != 'cli' || $this->_return_logs){
+						return implode($this->_echo);
+					}
 				     	die(1);
 				 }
 			}else{
 				$this->_log('Your version is updated');
+				if(php_sapi_name() != 'cli' || $this->_return_logs){
+					return implode($this->_echo);
+				}
 			     	die(0);
 			}
 		}
