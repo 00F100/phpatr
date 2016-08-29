@@ -2,12 +2,12 @@
 
 namespace PHPatr\Test\TestCase
 {
-	const VERSION='0.9.2';
 	use PHPUnit_Framework_TestCase as PHPunit;
 	use PHPatr\PHPatr;
 
 	class PHPatrTest extends PHPunit
 	{
+		const VERSION='0.9.2';
 		private $_PHPatr;
 
 		public function __construct()
