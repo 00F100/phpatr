@@ -18,7 +18,7 @@ namespace PHPatr
 		private $_configFile = './phpatr.json';
 		private $_hasError = false;
 		private $_saveFile = false;
-		private $_version = '0.9.1';
+		private $_version = '0.9.2';
 		private $_update = array(
 			'base' => 'https://raw.githubusercontent.com',
 			'path' => '/00F100/phpatr/master/dist/version',
@@ -365,7 +365,7 @@ namespace PHPatr
 
 		private function _log($message, $array = false)
 		{
-			$this->_echo("[\033[33mS\033[0m\033[30mLOG\033[0m] \033[33m$message\033[0m \n");
+			$this->_echo("[SLOG] $message \n");
 			if($array && is_array($array)){
 				print_r($array);
 				if($this->_saveFile){
@@ -379,16 +379,16 @@ namespace PHPatr
 
 		private function _echoWelcome()
 		{
-			$this->_echo("\033[33mPHPatr version " . $this->_version . "\033[0m\n");
+			$this->_echo("PHPatr version " . $this->_version . "\n");
 		}
 
 		private function _error($base, $auth, $test)
 		{
 			$this->_hasError = 1;
-			$this->_echo("[\033[31mFAIL\033[0m] " . $test['name'] . " \n");
+			$this->_echo("[FAIL] " . $test['name'] . " \n");
 			if(count($this->_error) > 0){
 				foreach($this->_error as $run_error){
-					$this->_echo("[\033[31mF\033[0m\033[30mLOG\033[0m] $run_error \n");
+					$this->_echo("[FLOG] $run_error \n");
 				}
 				$this->_error = array();
 			}
@@ -399,7 +399,7 @@ namespace PHPatr
 
 		private function _true($message)
 		{
-			$this->_echo("[\033[32m OK \033[0m] " . $message . " \n");
+			$this->_echo("[ OK ] " . $message . " \n");
 			if($this->_saveFile){
 				$this->_logFile('[ OK ] ' . $message . "\n");
 			}
@@ -407,7 +407,7 @@ namespace PHPatr
 
 		private function _success($base, $auth, $test)
 		{
-			$this->_echo("[\033[32m OK \033[0m] " . $test['name'] . " \n");
+			$this->_echo("[ OK ] " . $test['name'] . " \n");
 			if($this->_saveFile){
 				$this->_logFile('[ OK ] ' . $test['name'] . "\n");
 			}
@@ -432,23 +432,23 @@ namespace PHPatr
 
 		private function _help()
 		{
-			$this->_echo("   \033[33mUsage:\033[0m\n");
-			$this->_echo("        \033[33m Test API REST: \033[0m\n");
-			$this->_echo("	\033[32m php phpatr.phar --config <config file> [--output <file>, [--debug]] \033[0m \n\n");
-			$this->_echo("        \033[33m Generate example JSON configuration: \033[0m\n");
-			$this->_echo("	\033[32m php phpatr.phar --example-config-json \033[0m \n\n");
-			$this->_echo("        \033[33m Self Update: \033[0m\n");
-			$this->_echo("	\033[32m php phpatr.phar --self-update \033[0m \n\n");
-			$this->_echo("        \033[33m Help: \033[0m\n");
-			$this->_echo("	\033[32m php phpatr.phar --help \033[0m \n\n");
+			$this->_echo("   Usage:\n");
+			$this->_echo("         Test API REST: \n");
+			$this->_echo("	 php phpatr.phar --config <config file> [--output <file>, [--debug]]  \n\n");
+			$this->_echo("         Generate example JSON configuration: \n");
+			$this->_echo("	 php phpatr.phar --example-config-json  \n\n");
+			$this->_echo("         Self Update: \n");
+			$this->_echo("	 php phpatr.phar --self-update  \n\n");
+			$this->_echo("         Help: \n");
+			$this->_echo("	 php phpatr.phar --help  \n\n");
 			$this->_echo("	Options:\n");
-			$this->_echo("	\033[37m  -d,  --debug                    		Debug the calls to API REST \033[0m \n");
-			$this->_echo("	\033[37m  -c,  --config                     		File of configuration in JSON to test API REST calls \033[0m \n");
-			$this->_echo("	\033[37m  -e,  --example-config-json         		Generate a example file JSON to configuration \033[0m \n");
-			$this->_echo("	\033[37m  -o,  --output                     		Output file to save log \033[0m \n");
-			$this->_echo("	\033[37m  -u,  --self-update                		Upgrade to the latest version version \033[0m \n");
-			$this->_echo("	\033[37m  -v,  --version                    		Return the installed version of this package \033[0m \n");
-			$this->_echo("	\033[37m  -h,  --help                      		Show this menu \033[0m \n");
+			$this->_echo("	  -d,  --debug                    		Debug the calls to API REST  \n");
+			$this->_echo("	  -c,  --config                     		File of configuration in JSON to test API REST calls  \n");
+			$this->_echo("	  -e,  --example-config-json         		Generate a example file JSON to configuration  \n");
+			$this->_echo("	  -o,  --output                     		Output file to save log  \n");
+			$this->_echo("	  -u,  --self-update                		Upgrade to the latest version version  \n");
+			$this->_echo("	  -v,  --version                    		Return the installed version of this package  \n");
+			$this->_echo("	  -h,  --help                      		Show this menu  \n");
 			if(php_sapi_name() != 'cli' || $this->_return_logs){
 				return implode($this->_echo);
 			}
@@ -491,10 +491,10 @@ namespace PHPatr
 
 		private function _messageUpdate($version)
 		{
-			$this->_echo("\033[31mUPDATE:\033[0m \033[31m There is a new version available! \033[0m \n");
-			$this->_echo("\033[31mUPDATE:\033[0m \033[31m $this->_version -> $version \033[0m \n");
-			$this->_echo("\033[31mUPDATE:\033[0m \033[31m Automatic: Run the self-update: php phpatr.phar --self-update \033[0m \n");
-			$this->_echo("\033[31mUPDATE:\033[0m \033[31m Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/) \033[0m \n");
+			$this->_echo("UPDATE:  There is a new version available!  \n");
+			$this->_echo("UPDATE:  $this->_version -> $version  \n");
+			$this->_echo("UPDATE:  Automatic: Run the self-update: php phpatr.phar --self-update  \n");
+			$this->_echo("UPDATE:  Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/)  \n");
 		}
 
 		private function _selfUpdate()
