@@ -2,7 +2,7 @@
 PHPatr - Simple Api Test REST
 ========================================
 
-[![Travis](https://img.shields.io/travis/00F100/phpatr.svg?maxAge=2592000)]() [![coverage](https://img.shields.io/codecov/c/github/00F100/phpatr.svg)](https://codecov.io/gh/00F100/phpatr)
+[![Travis](https://img.shields.io/travis/00F100/phpatr.svg?maxAge=2592000)]() [![coverage](https://img.shields.io/codecov/c/github/00F100/phpatr.svg)](https://codecov.io/gh/00F100/phpatr) [![Code Climate](https://img.shields.io/codeclimate/github/00F100/phpatr.svg)](https://codeclimate.com/github/00F100/phpatr)
 
 Test your API REST on Jenkins based on JSON file!
 
