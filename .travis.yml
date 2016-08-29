@@ -6,4 +6,4 @@ script:
   - ./vendor/bin/phpunit tests/
   - php ./create_phar.php
 after_success:
-- coveralls
+  - bash <(curl -s https://codecov.io/bash)
