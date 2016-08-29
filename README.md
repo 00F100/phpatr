@@ -1,10 +1,8 @@
 
 PHPatr - Simple Api Test REST
+========================================
 
 [![Travis](https://img.shields.io/travis/00F100/phpatr.svg?maxAge=2592000)]() [![codecov](https://codecov.io/gh/00F100/phpatr/branch/master/graph/badge.svg)](https://codecov.io/gh/00F100/phpatr)
-
-
-========================================
 
 Test your API REST on Jenkins based on JSON file!
 
