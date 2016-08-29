@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": ">=5.5",
+        "phpunit/phpunit": "4.*",
         "guzzlehttp/guzzle": "6.*"
     },
     "autoload": {

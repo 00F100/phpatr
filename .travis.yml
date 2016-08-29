@@ -3,4 +3,5 @@ php:
   - 5.5
 script:
   - composer install
+  - ./vendor/bin/phpunit
   - php ./create_phar.php

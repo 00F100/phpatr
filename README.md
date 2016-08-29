@@ -1,7 +1,7 @@
 
 PHPatr - Simple Api Test REST
 
-[![Build Status](https://travis-ci.org/00F100/phpatr.svg?branch=master)](https://travis-ci.org/00F100/phpatr)
+[![Travis](https://img.shields.io/travis/00F100/phpatr.svg?maxAge=2592000)]()
 
 ========================================
 

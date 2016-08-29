@@ -26,6 +26,13 @@ namespace PHPatr
 		private $_download = 'https://github.com/00F100/phpatr/raw/master/dist/phpatr.phar?';
 		private $_error = array();
 		private $_debug = false;
+		private $_echo = array();
+		private $_return_logs = false;
+
+		public function __construct($return_logs = false)
+		{
+			$this->_return_logs = $return_logs;
+		}
 
 		public function init()
 		{
@@ -43,7 +50,7 @@ namespace PHPatr
 						break;
 					case '-e':
 					case '--example-config-json':
-						$this->_exampleConfigJson();
+						return $this->_exampleConfigJson();
 						break;
 					case '-o':
 					case '--output':
@@ -64,7 +71,7 @@ namespace PHPatr
 						break;
 					case '-v':
 					case '--version':
-						$this->_version();
+						return $this->_version();
 						break;
 				}
 				next($args);
@@ -157,13 +164,13 @@ namespace PHPatr
 								if(array_key_exists('fields', $assert)){
 									$this->_log('JSON config');
 									print_r($assert['fields'], false);
-									echo "\n";
+									$this->_echo("\n");
 								}
 								$this->_log('JSON response');
 								if(isset($json)){
 									print_r($json, false);
 								}
-								echo "\n======================\n\n";
+								$this->_echo("\n======================\n\n");
 							}
 						}else{
 							$this->_error[] = 'The status code does not match the assert';
@@ -203,7 +210,7 @@ namespace PHPatr
 											if($this->_saveFile){
 												$this->_logFile(print_r($assert['fields'], true));
 											}
-											echo "\n";
+											$this->_echo("\n");
 
 											$this->_log('JSON response');
 											print_r($json, false);
@@ -211,7 +218,7 @@ namespace PHPatr
 												$this->_logFile(print_r($json, true));
 											}
 
-											echo "\n======================\n\n";
+											$this->_echo("\n======================\n\n");
 										}
 										continue;
 									}else{
@@ -223,14 +230,14 @@ namespace PHPatr
 											if($this->_saveFile){
 												$this->_logFile(print_r($assert['fields'], true));
 											}
-											echo "\n";
+											$this->_echo("\n");
 
 											$this->_log('JSON response');
 											print_r($json, false);
 											if($this->_saveFile){
 												$this->_logFile(print_r($json, true));
 											}
-											echo "\n======================\n\n";
+											$this->_echo("\n======================\n\n");
 										}
 										continue;
 									}
@@ -244,14 +251,14 @@ namespace PHPatr
 										if($this->_saveFile){
 											$this->_logFile(print_r($assert['fields'], true));
 										}
-										echo "\n";
+										$this->_echo("\n");
 
 										$this->_log('JSON response');
 										print_r($json, false);
 										if($this->_saveFile){
 											$this->_logFile(print_r($json, true));
 										}
-										echo "\n======================\n\n";
+										$this->_echo("\n======================\n\n");
 									}
 									continue;
 								}
@@ -261,13 +268,13 @@ namespace PHPatr
 									if($this->_saveFile){
 										$this->_logFile(print_r($assert['fields'], true));
 									}
-									echo "\n";
+									$this->_echo("\n");
 									$this->_log('JSON response');
 									print_r($json, false);
 									if($this->_saveFile){
 										$this->_logFile(print_r($json, true));
 									}
-									echo "\n======================\n\n";
+									$this->_echo("\n======================\n\n");
 								}
 								continue;
 						}
@@ -279,7 +286,7 @@ namespace PHPatr
 							if($this->_saveFile){
 								$this->_logFile(print_r($assert['fields'], true));
 							}
-							echo "\n";
+							$this->_echo("\n");
 
 							$this->_log('JSON response');
 							if(isset($json)){
@@ -288,13 +295,16 @@ namespace PHPatr
 									$this->_logFile(print_r($json, true));
 								}
 							}
-							echo "\n======================\n\n";
+							$this->_echo("\n======================\n\n");
 						}
 						continue;
 					}
 				}
 			}
 			$this->_log('End: ' . date('Y-m-d H:i:s'));
+			if(php_sapi_name() != 'cli' || $this->_return_logs){
+				return implode($this->_echo);
+			}
 			die(0);
 			if($this->_hasError){
 				throw new ErrorTestException();
@@ -355,7 +365,7 @@ namespace PHPatr
 
 		private function _log($message, $array = false)
 		{
-			echo "[\033[33mS\033[0m\033[30mLOG\033[0m] \033[33m$message\033[0m \n";
+			$this->_echo("[\033[33mS\033[0m\033[30mLOG\033[0m] \033[33m$message\033[0m \n");
 			if($array && is_array($array)){
 				print_r($array);
 				if($this->_saveFile){
@@ -369,16 +379,16 @@ namespace PHPatr
 
 		private function _echoWelcome()
 		{
-			echo "\033[33mPHPatr version " . $this->_version . "\033[0m\n";
+			$this->_echo("\033[33mPHPatr version " . $this->_version . "\033[0m\n");
 		}
 
 		private function _error($base, $auth, $test)
 		{
 			$this->_hasError = 1;
-			echo "[\033[31mFAIL\033[0m] " . $test['name'] . " \n";
+			$this->_echo("[\033[31mFAIL\033[0m] " . $test['name'] . " \n");
 			if(count($this->_error) > 0){
 				foreach($this->_error as $run_error){
-					echo "[\033[31mF\033[0m\033[30mLOG\033[0m] $run_error \n";
+					$this->_echo("[\033[31mF\033[0m\033[30mLOG\033[0m] $run_error \n");
 				}
 				$this->_error = array();
 			}
@@ -389,7 +399,7 @@ namespace PHPatr
 
 		private function _true($message)
 		{
-			echo "[\033[32m OK \033[0m] " . $message . " \n";
+			$this->_echo("[\033[32m OK \033[0m] " . $message . " \n");
 			if($this->_saveFile){
 				$this->_logFile('[ OK ] ' . $message . "\n");
 			}
@@ -397,7 +407,7 @@ namespace PHPatr
 
 		private function _success($base, $auth, $test)
 		{
-			echo "[\033[32m OK \033[0m] " . $test['name'] . " \n";
+			$this->_echo("[\033[32m OK \033[0m] " . $test['name'] . " \n");
 			if($this->_saveFile){
 				$this->_logFile('[ OK ] ' . $test['name'] . "\n");
 			}
@@ -422,23 +432,26 @@ namespace PHPatr
 
 		private function _help()
 		{
-			echo "   \033[33mUsage:\033[0m\n";
-			echo "        \033[33m Test API REST: \033[0m\n";
-			echo "	\033[32m php phpatr.phar --config <config file> [--output <file>, [--debug]] \033[0m \n\n";
-			echo "        \033[33m Generate example JSON configuration: \033[0m\n";
-			echo "	\033[32m php phpatr.phar --example-config-json \033[0m \n\n";
-			echo "        \033[33m Self Update: \033[0m\n";
-			echo "	\033[32m php phpatr.phar --self-update \033[0m \n\n";
-			echo "        \033[33m Help: \033[0m\n";
-			echo "	\033[32m php phpatr.phar --help \033[0m \n\n";
-			echo "	Options:\n";
-			echo "	\033[37m  -d,  --debug                    		Debug the calls to API REST \033[0m \n";
-			echo "	\033[37m  -c,  --config                     		File of configuration in JSON to test API REST calls \033[0m \n";
-			echo "	\033[37m  -e,  --example-config-json         		Generate a example file JSON to configuration \033[0m \n";
-			echo "	\033[37m  -o,  --output                     		Output file to save log \033[0m \n";
-			echo "	\033[37m  -u,  --self-update                		Upgrade to the latest version version \033[0m \n";
-			echo "	\033[37m  -v,  --version                    		Return the installed version of this package \033[0m \n";
-			echo "	\033[37m  -h,  --help                      		Show this menu \033[0m \n";
+			$this->_echo("   \033[33mUsage:\033[0m\n");
+			$this->_echo("        \033[33m Test API REST: \033[0m\n");
+			$this->_echo("	\033[32m php phpatr.phar --config <config file> [--output <file>, [--debug]] \033[0m \n\n");
+			$this->_echo("        \033[33m Generate example JSON configuration: \033[0m\n");
+			$this->_echo("	\033[32m php phpatr.phar --example-config-json \033[0m \n\n");
+			$this->_echo("        \033[33m Self Update: \033[0m\n");
+			$this->_echo("	\033[32m php phpatr.phar --self-update \033[0m \n\n");
+			$this->_echo("        \033[33m Help: \033[0m\n");
+			$this->_echo("	\033[32m php phpatr.phar --help \033[0m \n\n");
+			$this->_echo("	Options:\n");
+			$this->_echo("	\033[37m  -d,  --debug                    		Debug the calls to API REST \033[0m \n");
+			$this->_echo("	\033[37m  -c,  --config                     		File of configuration in JSON to test API REST calls \033[0m \n");
+			$this->_echo("	\033[37m  -e,  --example-config-json         		Generate a example file JSON to configuration \033[0m \n");
+			$this->_echo("	\033[37m  -o,  --output                     		Output file to save log \033[0m \n");
+			$this->_echo("	\033[37m  -u,  --self-update                		Upgrade to the latest version version \033[0m \n");
+			$this->_echo("	\033[37m  -v,  --version                    		Return the installed version of this package \033[0m \n");
+			$this->_echo("	\033[37m  -h,  --help                      		Show this menu \033[0m \n");
+			if(php_sapi_name() != 'cli' || $this->_return_logs){
+				return implode($this->_echo);
+			}
 			die(0);
 		}
 
@@ -478,10 +491,10 @@ namespace PHPatr
 
 		private function _messageUpdate($version)
 		{
-			echo "\033[31mUPDATE:\033[0m \033[31m There is a new version available! \033[0m \n";
-			echo "\033[31mUPDATE:\033[0m \033[31m $this->_version -> $version \033[0m \n";
-			echo "\033[31mUPDATE:\033[0m \033[31m Automatic: Run the self-update: php phpatr.phar --self-update \033[0m \n";
-			echo "\033[31mUPDATE:\033[0m \033[31m Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/) \033[0m \n";
+			$this->_echo("\033[31mUPDATE:\033[0m \033[31m There is a new version available! \033[0m \n");
+			$this->_echo("\033[31mUPDATE:\033[0m \033[31m $this->_version -> $version \033[0m \n");
+			$this->_echo("\033[31mUPDATE:\033[0m \033[31m Automatic: Run the self-update: php phpatr.phar --self-update \033[0m \n");
+			$this->_echo("\033[31mUPDATE:\033[0m \033[31m Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/) \033[0m \n");
 		}
 
 		private function _selfUpdate()
@@ -527,22 +540,125 @@ namespace PHPatr
 
 		private function _version()
 		{
-			echo $this->_version;
+			$this->_echo($this->_version);
+			if(php_sapi_name() != 'cli' || $this->_return_logs){
+				return implode($this->_echo);
+			}
 			die(0);
 		}
 
 		private function _exampleConfigJson()
 		{
 		 	$this->_log('Loading example file');
-			$content = file_get_contents('phpatr.json');
-		 	$this->_true('Loading example file');
-		 	$this->_log('Save new file in: "./phpatr.json"');
-			$jsonFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr.json';
-			$fopen = fopen($jsonFile, 'w');
+		 	$content = $this->_returnJson();
+			$fopen = fopen('phpatr.json', 'w');
 			fwrite($fopen, $content);
 			fclose($fopen);
 		 	$this->_true('Save new file in: "./phpatr.json"');
+		 	if(php_sapi_name() != 'cli' || $this->_return_logs){
+		 		$this->_echo($content);
+				return implode($this->_echo);
+			}
 	     		die(0);
+		}
+
+		private function _echo($var)
+		{
+			if(php_sapi_name() == 'cli' && !$this->_return_logs){
+				echo $var;
+			}else{
+				$this->_echo[] = $var;
+			}
+		}
+
+		private function _returnJson()
+		{
+			return '{
+					"name": "Test reqres.in",
+					"base": [
+						{
+							"name": "httpbin.org",
+							"url": "http://httpbin.org",
+							"query": {},
+							"header": {}
+						}
+					],
+					"auth": [
+						{
+							"name": "noAuth",
+							"query":{},
+							"header": {},
+							"data": {}
+						}
+					],
+					"tests": [
+						{
+							"name": "Test to get IP",
+							"base": "httpbin.org",
+							"auth": "noAuth",
+							"path": "/ip",
+							"method": "GET",
+							"query": {},
+							"header": {},
+							"data": {},
+							"assert": {
+								"type": "json",
+								"code": 200,
+								"fields": {
+									"origin": "string"
+								}
+							}
+						},
+						{
+							"name": "Test to POST data",
+							"base": "httpbin.org",
+							"auth": "noAuth",
+							"path": "/post",
+							"method": "POST",
+							"query": {},
+							"header": {},
+							"data": {
+								"posttest": "return to post"
+							},
+							"assert": {
+								"type": "json",
+								"code": 200,
+								"fields": {
+									"data": "string",
+									"json": {
+										"posttest": "string"
+									}
+								}
+							}
+						},
+						{
+							"name": "Test not found 404",
+							"base": "httpbin.org",
+							"auth": "noAuth",
+							"path": "/status/404",
+							"method": "GET",
+							"query": {},
+							"header": {},
+							"data": {},
+							"assert": {
+								"code": 404
+							}
+						},
+						{
+							"name": "Test status teapot",
+							"base": "httpbin.org",
+							"auth": "noAuth",
+							"path": "/status/418",
+							"method": "GET",
+							"query": {},
+							"header": {},
+							"data": {},
+							"assert": {
+								"code": 418
+							}
+						}
+					]
+				}';
 		}
 	}
 }
