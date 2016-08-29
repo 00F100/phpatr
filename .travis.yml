@@ -7,3 +7,6 @@ script:
   - php ./create_phar.php
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+addons:
+    code_climate:
+        repo_token: 968771b2c1ef1e6752942753ba4ae168afef7ccd29e2b39864f4863148d676f5
