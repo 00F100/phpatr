@@ -14,9 +14,7 @@ Installation
 ```
 $ wget https://raw.githubusercontent.com/00F100/phpatr/master/dist/phpatr.phar
 ```
-
 or
-
 [Download Phar file](https://raw.githubusercontent.com/00F100/phpatr/master/dist/phpatr.phar)
 
 Configuration
