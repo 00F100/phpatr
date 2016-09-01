@@ -7,6 +7,7 @@ namespace PHPatr\Test\TestCase
 
 	class PHPatrTest extends PHPunit
 	{
+		const VERSION='0.9.2';
 		private $_PHPatr;
 
 		public function __construct()
@@ -17,13 +18,13 @@ namespace PHPatr\Test\TestCase
 		public function testHelp()
 		{
 			$output = $this->_PHPatr->init('-h');
-			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
+			$this->assertTrue(strpos($output, 'PHPatr version ' . self::VERSION) !== false);
 		}
 
 		public function testVersion()
 		{
 			$output = $this->_PHPatr->init('-v');
-			$this->assertTrue($output == '0.9.0');
+			$this->assertTrue($output == self::VERSION);
 		}
 
 		public function testExample()
@@ -58,13 +59,13 @@ namespace PHPatr\Test\TestCase
 		public function testConfigSuccess()
 		{
 			$output = $this->_PHPatr->init('-c', 'phpatr.json');
-			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
+			$this->assertTrue(strpos($output, 'PHPatr version ' . self::VERSION) !== false);
 		}
 
 		public function testConfigSuccessOutput()
 		{
 			$output = $this->_PHPatr->init('-c', 'phpatr.json', '-o', 'log');
-			$this->assertTrue(strpos($output, 'PHPatr version 0.9.0') !== false);
+			$this->assertTrue(strpos($output, 'PHPatr version ' . self::VERSION) !== false);
 		}
 	}
 }
