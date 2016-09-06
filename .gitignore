@@ -2,3 +2,4 @@ composer.lock
 vendor
 .htaccess
 build/phpunit/*
+composer.phar
