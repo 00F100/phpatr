@@ -17,8 +17,10 @@
         "phpunit/phpunit": "4.*",
         "guzzlehttp/guzzle": "6.*"
     },
+    "require-dev": {
+        "00f100/phpdbug": "*"
+    },
     "autoload": {
-        "files": ["src/functions.php"],
         "psr-4": {
             "PHPatr\\": "src/"
         }
