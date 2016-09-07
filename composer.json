@@ -21,6 +21,7 @@
         "00f100/phpdbug": "*"
     },
     "autoload": {
+        "files": ["src/functions.php"],
         "psr-4": {
             "PHPatr\\": "src/"
         }
