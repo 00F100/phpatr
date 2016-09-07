@@ -2,3 +2,5 @@ composer.lock
 vendor
 .htaccess
 build/phpunit/*
+phpatr.json
+log
