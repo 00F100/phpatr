@@ -14,11 +14,11 @@
     ],
     "require": {
         "php": ">=5.5",
-        "phpunit/phpunit": "4.*",
         "guzzlehttp/guzzle": "6.*"
     },
     "require-dev": {
-        "00f100/phpdbug": "*"
+        "00f100/phpdbug": "*",
+        "phpunit/phpunit": "4.*"
     },
     "autoload": {
         "files": ["src/functions.php"],
