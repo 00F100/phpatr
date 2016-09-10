@@ -4,7 +4,7 @@ php:
 script:
   - composer install
   - ./vendor/bin/phpunit tests/ --coverage-clover=clover.xml
-  - php ./create_phar.php
+  - php ./bin/create_phar.php
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 addons:
