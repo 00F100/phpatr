@@ -479,7 +479,7 @@ namespace PHPatr
             while (!$body->eof()) {
                 $version[] = $body->read(1024);
             }
-            $version = implode($version);
+            $version = trim(implode($version));
             $_cdn_version = str_replace('.', '', $version);
 
             if($returnVersion){
