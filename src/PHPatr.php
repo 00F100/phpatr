@@ -537,7 +537,7 @@ namespace PHPatr
                     }
                          die(0);
                  } catch (Exception $e) {
-                    $this->_error('Downloading new version');
+                    $this->_echo($e->getMessage());
                     if(php_sapi_name() != 'cli' || $this->_return_logs){
                         return implode($this->_echo);
                     }
