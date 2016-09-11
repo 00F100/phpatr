@@ -28,90 +28,100 @@ Example:
 
 ```json
 {
-	"name": "Test reqres.in",
-	"base": [
-		{
-			"name": "httpbin.org",
-			"url": "http://httpbin.org",
-			"query": {},
-			"header": {}
-		}
-	],
-	"auth": [
-		{
-			"name": "noAuth",
-			"query":{},
-			"header": {},
-			"data": {}
-		}
-	],
-	"tests": [
-		{
-			"name": "Test to get IP",
-			"base": "httpbin.org",
-			"auth": "noAuth",
-			"path": "/ip",
-			"method": "GET",
-			"query": {},
-			"header": {},
-			"data": {},
-			"assert": {
-				"type": "json",
-				"code": 200,
-				"fields": {
-					"origin": "string"
-				}
-			}
-		},
-		{
-			"name": "Test to POST data",
-			"base": "httpbin.org",
-			"auth": "noAuth",
-			"path": "/post",
-			"method": "POST",
-			"query": {},
-			"header": {},
-			"data": {
-				"posttest": "return to post"
-			},
-			"assert": {
-				"type": "json",
-				"code": 200,
-				"fields": {
-					"data": "string",
-					"json": {
-						"posttest": "string"
-					}
-				}
-			}
-		},
-		{
-			"name": "Test not found 404",
-			"base": "httpbin.org",
-			"auth": "noAuth",
-			"path": "/status/404",
-			"method": "GET",
-			"query": {},
-			"header": {},
-			"data": {},
-			"assert": {
-				"code": 404
-			}
-		},
-		{
-			"name": "Test status teapot",
-			"base": "httpbin.org",
-			"auth": "noAuth",
-			"path": "/status/418",
-			"method": "GET",
-			"query": {},
-			"header": {},
-			"data": {},
-			"assert": {
-				"code": 418
-			}
-		}
-	]
+    "name": "Test reqres.in",
+    "base": [
+        {
+            "name": "httpbin.org",
+            "url": "http://httpbin.org",
+            "query": {},
+            "header": {}
+        }
+    ],
+    "auth": [
+        {
+            "name": "noAuth",
+            "query":{},
+            "header": {},
+            "data": {}
+        }
+    ],
+    "tests": [
+        {
+            "name": "Test to get IP",
+            "base": "httpbin.org",
+            "auth": "noAuth",
+            "path": "/ip",
+            "method": "GET",
+            "query": {},
+            "header": {},
+            "data": {},
+            "assert": {
+                "type": "json",
+                "code": 200,
+                "fields": [
+                    {
+                        "name": "origin",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Test to POST data",
+            "base": "httpbin.org",
+            "auth": "noAuth",
+            "path": "/post",
+            "method": "POST",
+            "query": {},
+            "header": {},
+            "data": {
+                "posttest": "95ddcb76ded165f81607e3f050070946"
+            },
+            "assert": {
+                "type": "json",
+                "code": 200,
+                "fields": [
+                    {
+                        "name": "form",
+                        "type": "array",
+                        "fields": [
+                            {
+                                "name": "posttest",
+                                "type": "string",
+                                "eq": "95ddcb76ded165f81607e3f050070946"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Test not found 404",
+            "base": "httpbin.org",
+            "auth": "noAuth",
+            "path": "/status/404",
+            "method": "GET",
+            "query": {},
+            "header": {},
+            "data": {},
+            "assert": {
+                "code": 404
+            }
+        },
+        {
+            "name": "Test status teapot",
+            "base": "httpbin.org",
+            "auth": "noAuth",
+            "path": "/status/418",
+            "method": "GET",
+            "query": {},
+            "header": {},
+            "data": {},
+            "assert": {
+                "code": 418
+            }
+        }
+    ]
 }
 ```
 
@@ -149,11 +159,12 @@ How to:
 Execute test:
 
 ```
-$ php phpatr.phar --config <config file> [--output <file>]
+$ php phpatr.phar --config <config file> [--output <file>, [--debug]]
 
 	Options:
 	  -c,  --config                     File of configuration in JSON to test API REST calls  
-	  -o,  --output                    Output file to save log  
+	  -o,  --output                    Output file to save log
+	  -d,  --debug                     Debug the calls to API REST   
 ```
 
 Update:
@@ -196,5 +207,5 @@ user@ubuntu /path/to/project> php phpatr.phar --config phpatr.json
 [FAIL] Example error: Test users vector multilevel 
 [FLOG] The tests[]->assert->fields does not match to test 
 [SLOG] End: 2016-08-27 15:40:12 
-
+[FLOG] Test failed
 ```

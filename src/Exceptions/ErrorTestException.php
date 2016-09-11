@@ -6,7 +6,7 @@ namespace PHPatr\Exceptions
 
 	class ErrorTestException extends PHpatrException
 	{
-		protected $message = 'Test  Api RET fail';
+		protected $message = 'Test failed';
 		protected $code = 500;
 	}
 }
