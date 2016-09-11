@@ -33,13 +33,6 @@ namespace PHPatr\Test\TestCase
 			$this->assertTrue(strpos($output, 'Save new file in: "./phpatr.json"') !== false);
 		}
 
-		public function testSelfUpdate()
-		{
-			$output = $this->_PHPatr->init('-u');
-			// debug($output);
-			$this->assertTrue(strpos($output, 'Your version is updated') !== false);
-		}
-
 		/**
 		  * @expectedException     PHPatr\Exceptions\PHpatrException
 		  */
