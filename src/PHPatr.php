@@ -18,7 +18,7 @@ namespace PHPatr
         private $_configFile = './phpatr.json';
         private $_hasError = false;
         private $_saveFile = false;
-        private $_version = '0.10.0';
+        private $_version = '0.10.1';
         private $_update = array(
             'base' => 'https://raw.githubusercontent.com',
             'path' => '/00F100/phpatr/master/dist/version',
@@ -462,6 +462,7 @@ namespace PHPatr
 
         private function _checkUpdate($returnVersion = false)
         {
+
             $client = new Client([
                 'base_uri' => $this->_update['base'],
                 'timeout' => 10,
@@ -489,7 +490,7 @@ namespace PHPatr
             $_local_version = $this->_version;
             $_local_version = str_replace('.', '', $_local_version);
 
-            if($_local_version < $_cdn_version){
+            if($_local_version != $_cdn_version){
                 $this->_messageUpdate($version);
             }
         }
@@ -509,7 +510,7 @@ namespace PHPatr
             $_local_version = $this->_version;
             $_local_version = str_replace('.', '', $_local_version);
 
-            if($_local_version < $_cdn_version){
+            if($_local_version != $_cdn_version){
                 $pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
                  try {
                      $client = new Client();
