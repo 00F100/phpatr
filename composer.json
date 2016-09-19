@@ -1,7 +1,7 @@
 {
     "name": "00f100/phpatr",
     "type": "package",
-    "version": "0.10.1",
+    "version": "0.10.2",
     "description": "Package to your test routes API REST to use in Jenkins",
     "keywords": ["test", "api", "rest"],
     "homepage": "https://github.com/00f100/phpatr",
