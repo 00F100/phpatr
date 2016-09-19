@@ -18,7 +18,7 @@ namespace PHPatr
         private $_configFile = './phpatr.json';
         private $_hasError = false;
         private $_saveFile = false;
-        private $_version = '0.10.1';
+        private $_version = '0.10.2';
         private $_update = array(
             'base' => 'https://raw.githubusercontent.com',
             'path' => '/00F100/phpatr/master/dist/version',
@@ -649,7 +649,7 @@ namespace PHPatr
                                                     {
                                                         "name": "posttest",
                                                         "type": "string",
-                                                        "eq": "95ddcb76ded165f81607e3f05007094 6"
+                                                        "eq": "95ddcb76ded165f81607e3f050070946"
                                                     }
                                                 ]
                                             }
