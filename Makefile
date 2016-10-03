@@ -15,10 +15,7 @@ clean-dist:
 	fi
 
 download-composer:
-	cd "bin"; \
-	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
-	php composer-setup.php; \
-	php -r "unlink('composer-setup.php');"
+	cd "bin"; php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; php composer-setup.php; php -r "unlink('composer-setup.php');"
 
 composer-run:
 	if [ -f "composer.lock" ] ; then \
