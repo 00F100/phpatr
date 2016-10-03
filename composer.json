@@ -1,7 +1,7 @@
 {
     "name": "00f100/phpatr",
     "type": "package",
-    "version": "0.10.2",
+    "version": "0.11.0",
     "description": "Package to your test routes API REST to use in Jenkins",
     "keywords": ["test", "api", "rest"],
     "homepage": "https://github.com/00f100/phpatr",
@@ -14,7 +14,8 @@
     ],
     "require": {
         "php": ">=5.5",
-        "guzzlehttp/guzzle": "6.*"
+        "guzzlehttp/guzzle": "6.*",
+        "00f100/phpuphar": "*"
     },
     "require-dev": {
         "00f100/phpdbug": "*",

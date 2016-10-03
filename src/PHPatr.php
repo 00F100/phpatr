@@ -5,6 +5,7 @@ namespace PHPatr
     use Phar;
     use Exception;
     use GuzzleHttp\Client;
+    use PHPUPhar\PHPUPhar;
     use PHPatr\Exceptions\ConfigFileNotFoundException;
     use PHPatr\Exceptions\ConfigFileEmptyException;
     use PHPatr\Exceptions\OutputFileEmptyException;
@@ -12,6 +13,7 @@ namespace PHPatr
 
     class PHPatr
     {
+        const VERSION = '0.11.0';
         private $_client;
         private $_auths = array();
         private $_bases = array();
@@ -71,7 +73,7 @@ namespace PHPatr
                         break;
                     case '-v':
                     case '--version':
-                        return $this->_version();
+                        return self::VERSION;
                         break;
                 }
                 next($args);
@@ -384,7 +386,7 @@ namespace PHPatr
 
         private function _echoWelcome()
         {
-            $this->_echo("PHPatr version " . $this->_version . "\n");
+            $this->_echo("PHPatr version " . self::VERSION . "\n");
         }
 
         private function _error($base, $auth, $test)
@@ -487,7 +489,7 @@ namespace PHPatr
                 return $version;
             }
 
-            $_local_version = $this->_version;
+            $_local_version = self::VERSION;
             $_local_version = str_replace('.', '', $_local_version);
 
             if($_local_version != $_cdn_version){
@@ -498,59 +500,23 @@ namespace PHPatr
         private function _messageUpdate($version)
         {
             $this->_echo("UPDATE:  There is a new version available!  \n");
-            $this->_echo("UPDATE:  $this->_version -> $version  \n");
+            $this->_echo("UPDATE:  self::VERSION -> $version  \n");
             $this->_echo("UPDATE:  Automatic: Run the self-update: php phpatr.phar --self-update  \n");
             $this->_echo("UPDATE:  Manual: visit the GitHub repository and download the latest version (https://github.com/00F100/phpatr/)  \n");
         }
 
         private function _selfUpdate()
         {
-            $version = $this->_checkUpdate(true);
-            $_cdn_version = str_replace('.', '', $version);
-            $_local_version = $this->_version;
-            $_local_version = str_replace('.', '', $_local_version);
-
-            if($_local_version != $_cdn_version){
-                $pharFile = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . '/phpatr-updated.phar';
-                 try {
-                     $client = new Client();
-                     $this->_log('Downloading new version');
-                    $response = $client->request('GET', $this->_download . md5(microtime()));
-                    $body = $response->getBody();
-                    $phar = array();
-                    while (!$body->eof()) {
-                        $phar[] = $body->read(10240);
-                    }
-                    $phar = implode($phar);
-                     $this->_true('Downloading new version');
-                    $fopen = fopen($pharFile, 'w');
-                    fwrite($fopen, $phar);
-                    fclose($fopen);
-                         $this->_log('Updating Phar file');
-                    copy($pharFile, 'phpatr.phar');
-                         $this->_true('Updating Phar file');
-                         $this->_log('Removing temporary file');
-                        unlink($pharFile);
-                         $this->_true('Removing temporary file');
-                        $this->_true('PHPatr updated to: ' . $version);
-                    if(php_sapi_name() != 'cli' || $this->_return_logs){
-                        return implode($this->_echo);
-                    }
-                         die(0);
-                 } catch (Exception $e) {
-                    $this->_echo($e->getMessage());
-                    if(php_sapi_name() != 'cli' || $this->_return_logs){
-                        return implode($this->_echo);
-                    }
-                         die(1);
-                 }
-            }else{
-                $this->_log('Your version is updated');
-                if(php_sapi_name() != 'cli' || $this->_return_logs){
-                    return implode($this->_echo);
-                }
-                     die(0);
+            $this->_echo('Your version: ' . self::VERSION . "\n");
+            $selfUpdate = new PHPUPhar($this->_update, false, self::VERSION, $this->_download, 'phpatr.phar');
+            $this->_echo("Versão em 00F100/phpatr: " . $selfUpdate->getVersion() . " \n");
+            if(self::VERSION == $selfUpdate->getVersion()){
+                $this->_echo("A sua versão esta atualizada!\n");
             }
+            if (self::VERSION != $selfUpdate->getVersion() && $selfUpdate->update()) {
+                $this->_echo("A sua versão foi atualizada com sucesso!\n");
+            }
+            exit(0);
         }
 
         private function _version()
