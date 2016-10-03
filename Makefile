@@ -3,6 +3,7 @@
 all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
 
 update-repo:
+	git reset --hard;
 	git checkout master;
 	git pull origin master;
 
