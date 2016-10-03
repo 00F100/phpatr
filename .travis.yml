@@ -2,11 +2,8 @@ language: php
 php:
   - 5.5
 script:
-  - rm dist/phpatr.phar;
-  - rm dist/phpatr.phar.gz;
-  - composer install
-  - php bin/php2phar.phar -d ./ -i src/index.php -o dist/phpatr.phar;
-  - ./vendor/bin/phpunit tests/ --coverage-clover=clover.xml
+  - make all
+  - make test
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 addons:

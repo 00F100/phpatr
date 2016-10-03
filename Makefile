@@ -1,6 +1,7 @@
-.PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+.PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test phpunit-run
 
 all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+test: phpunit-run
 
 update-repo:
 	git reset --hard;
@@ -36,3 +37,6 @@ commit-push-changes-git:
 	git add "dist/phpatr.phar";
 	git commit -m "Jenkins update the phpatr.phar";
 	git push origin master;
+
+phpunit-run:
+	./vendor/bin/phpunit tests/ --coverage-clover=clover.xml
