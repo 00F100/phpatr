@@ -19,9 +19,9 @@ download-composer:
 
 composer-run:
 	if [ -f "composer.lock" ] ; then \
-		php bin/composer.phar update --no-dev;
+		php bin/composer.phar update --no-dev; \
 	else \
-		php bin/composer.phar install --no-dev;
+		php bin/composer.phar install --no-dev; \
 	fi
 
 download-php2phar:
