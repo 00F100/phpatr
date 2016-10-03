@@ -1,6 +1,7 @@
-.PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test phpunit-run
+.PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test phpunit-run push
 
-all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run
+push: commit-push-changes-git
 test: phpunit-run
 
 update-repo:
@@ -27,8 +28,7 @@ composer-run:
 	fi
 
 download-php2phar:
-	cd "bin"; \
-	wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar;
+	cd bin; wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar;
 
 php2phar-run:
 	php bin/php2phar.phar -d ./ -i src/index.php -o dist/phpatr.phar;
