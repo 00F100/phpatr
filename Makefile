@@ -46,7 +46,7 @@ composer-dev-run:
 download-php2phar:
 	if [ ! -f "bin/php2phar.phar" ] ; then \
 		cd bin; \
-		wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar;
+		wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar; \
 	fi
 
 php2phar-run:
