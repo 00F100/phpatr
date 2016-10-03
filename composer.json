@@ -22,7 +22,6 @@
         "phpunit/phpunit": "4.*"
     },
     "autoload": {
-        "files": ["src/functions.php"],
         "psr-4": {
             "PHPatr\\": "src/"
         }

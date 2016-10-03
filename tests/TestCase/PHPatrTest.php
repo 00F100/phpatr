@@ -7,7 +7,7 @@ namespace PHPatr\Test\TestCase
 
 	class PHPatrTest extends PHPunit
 	{
-		const VERSION='0.11.0';
+		const VERSION='0.12.0';
 		private $_PHPatr;
 
 		public function __construct()
