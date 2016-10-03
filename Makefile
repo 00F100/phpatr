@@ -1,7 +1,7 @@
 .PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test phpunit-run push
 
-all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
-test: update-repo clean-dist download-composer composer-dev-run download-php2phar php2phar-run phpunit-run
+all: update-repo clean-dist mkdir-bin download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+test: update-repo clean-dist mkdir-bin download-composer composer-dev-run download-php2phar php2phar-run phpunit-run
 
 update-repo:
 	git reset --hard;
@@ -16,8 +16,18 @@ clean-dist:
 		rm dist/phpatr.phar.gz; \
 	fi
 
+mkdir-bin:
+	if [ ! -d "bin" ] ; then \
+		mkdir bin; \
+	fi
+
 download-composer:
-	mkdir bin; cd bin; php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; php composer-setup.php; php -r "unlink('composer-setup.php');"
+	if [ ! -f "bin/composer.phar" ] ; then \
+		cd bin; \
+		php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
+		php composer-setup.php; \
+		php -r "unlink('composer-setup.php');"
+	fi;
 
 composer-run:
 	if [ -f "composer.lock" ] ; then \
@@ -34,7 +44,10 @@ composer-dev-run:
 	fi
 
 download-php2phar:
-	cd bin; wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar;
+	if [ ! -f "bin/php2phar.phar" ] ; then \
+		cd bin; \
+		wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar;
+	fi
 
 php2phar-run:
 	php bin/php2phar.phar -d ./ -i src/index.php -o dist/phpatr.phar;
