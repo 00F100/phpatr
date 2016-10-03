@@ -1,8 +1,7 @@
 .PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test phpunit-run push
 
-all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run
-push: commit-push-changes-git
-test: phpunit-run
+all: update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+test: update-repo clean-dist download-composer composer-dev-run download-php2phar php2phar-run phpunit-run
 
 update-repo:
 	git reset --hard;
@@ -25,6 +24,13 @@ composer-run:
 		php bin/composer.phar update --no-dev; \
 	else \
 		php bin/composer.phar install --no-dev; \
+	fi
+
+composer-dev-run:
+	if [ -f "composer.lock" ] ; then \
+		php bin/composer.phar update; \
+	else \
+		php bin/composer.phar install; \
 	fi
 
 download-php2phar:
