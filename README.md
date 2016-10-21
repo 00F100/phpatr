@@ -4,6 +4,7 @@ PHPatr - Simple Api Test REST
 
 [![Jenkins](https://img.shields.io/badge/build%20Jenkins-passing-brightgreen.svg)](https://codeclimate.com/github/00F100/phpatr) [![Travis](https://img.shields.io/travis/00F100/phpatr.svg?maxAge=2592000)]() [![coverage](https://img.shields.io/codecov/c/github/00F100/phpatr.svg)](https://codecov.io/gh/00F100/phpatr) [![Code Climate](https://img.shields.io/codeclimate/github/00F100/phpatr.svg)](https://codeclimate.com/github/00F100/phpatr) [![MIT](https://img.shields.io/dub/l/vibe-d.svg?maxAge=2592000)](https://codeclimate.com/github/00F100/phpatr) 
 
+
 Package to [Smoke testing](https://en.wikipedia.org/wiki/Smoke_testing_(software))
 
 Test your API REST on Jenkins based on JSON file!
